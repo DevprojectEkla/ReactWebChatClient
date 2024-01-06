@@ -1,0 +1,45 @@
+import styled from 'styled-components'
+import {THEME_COLOR,SUCCESS_COLOR} from 'config'
+import {CustomButton} from './Button'
+
+const StyledPopupOverlay = styled.div`position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: ${THEME_COLOR};
+  display: flex;
+    flex-direction: column;
+  justify-content: center;
+  align-items: center;`;
+const StyledPopupButton = styled(CustomButton)`transition: background-color .8s ease; 
+
+  &:hover {
+    background-color: #2ecc71; /* Example: Green color on hover */}`;
+const StyledPopup = styled.div`background: ${SUCCESS_COLOR};
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;`
+
+const StyledSpan = styled.span`
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;`
+
+
+
+const Success = ({isOpen, onClose,message}) => {
+    return (
+            <StyledPopupOverlay>
+        <StyledPopup> {message}<StyledSpan onClick={onClose}>
+            &times;
+          </StyledSpan>
+        <StyledPopupButton onClick={onClose} children="Ok"/>
+        </StyledPopup>
+        </StyledPopupOverlay>
+    )
+}
+
+export default Success
