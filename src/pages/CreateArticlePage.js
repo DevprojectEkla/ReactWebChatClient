@@ -1,72 +1,91 @@
 // Your main component using ArticleForm
-import React, {useState} from 'react';
-import ArticleForm from '../components/ArticleForm';
-import Success from '../components/Success'
-import{ apiBaseUrl,MUTLIPART_BOUNDARY } from 'config'
+import React, { useState } from "react";
+import ArticleForm from "../components/ArticleForm";
+import PopUp from "../components/PopUp";
+import { usePopup } from "../utils";
+import { apiBaseUrl, MUTLIPART_BOUNDARY } from "config";
+import { useNavigate } from "react-router-dom";
 
 const CreateArticlePage = () => {
-    const [file,setFile] = useState(null)
-    const [success,setSuccess] = useState(false)
-    const [isPopupOpen, setPopupOpen] = useState(false);
+  const [file, setFile] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const { isPopupOpen, popUpType, popUpMessage, configurePopup } = usePopup();
 
-   const popUpMessage = "Article créé avec succès"
-  const openPopup = () => {
-    setPopupOpen(true);
-  };
-
+  const navigate = useNavigate();
   const closePopup = () => {
-    setPopupOpen(false);
+    configurePopup(false, "", "");
+    if (popUpType === "success") {
+      navigate("/");
+    }
   };
 
   const handleFormSubmit = async (formData) => {
-      console.log("FORMDATA:",formData)
-    
+    console.log("FORMDATA:", formData);
+
     // Make an HTTP request to your server to create a new article using formData
     // You can use libraries like axios or fetch for making HTTP requests
     try {
-        const fileData = new FormData();
+      const fileData = new FormData();
 
-        fileData.append('title', formData.title)
-        fileData.append('author', formData.author)
-        fileData.append('body', formData.body)
-        fileData.append('filename', formData.filename);
-        fileData.append('type',formData.type)
-        fileData.append('content',formData.content)
-    
-    
-        console.log("FILEDATA",fileData)
-      const response = await fetch(apiBaseUrl+'/api/articles/create', {
-        method: 'POST',
+      fileData.append("title", formData.title);
+      fileData.append("author", formData.author);
+      fileData.append("body", formData.body);
+      fileData.append("filename", formData.filename);
+      fileData.append("type", formData.type);
+      fileData.append("content", formData.content);
+
+      console.log("FILEDATA", fileData);
+      const response = await fetch(apiBaseUrl + "/api/articles/create", {
+        method: "POST",
         body: fileData,
         headers: {
-          'Content-Type': `multipart/form-data; boundary="${MUTLIPART_BOUNDARY}"`
-
+          "Content-Type": `multipart/form-data; boundary="${MUTLIPART_BOUNDARY}"`,
         },
-      })
-           // .then(response => response.json().then(data => console.log(data)).catch(error => console.error("Error: ",error)))
+      });
+      // .then(response => response.json().then(data => console.log(data)).catch(error => console.error("Error: ",error)))
       if (response.ok) {
-          
         // Handle successful article creation
-        console.log('Article created successfully');
-          
-                    setSuccess(true)
-          openPopup()
+        console.log("Article created successfully");
+
+        setSuccess(true);
+
+        configurePopup(
+          true,
+          "success",
+          `L'article '${formData.title}'  a bien été créé`
+        );
       } else {
         // Handle error
-        console.error('Error creating article');
+        console.log(response)
+        configurePopup(
+          true,
+          "failure",
+            `L'article '${formData.title}' n'a pas pu être créé\n Error: ${await response.json()}`
+        );
+        console.error("Error creating article");
       }
     } catch (error) {
       // Handle network error
-      console.error('Network error:', error);
+      console.error("Server Error:", error);
     }
   };
 
   return (
     <div>
-      <h1>Create New Article</h1>
-      <ArticleForm formTitle="Créer un article" onSubmit={handleFormSubmit} setFile={setFile} action="Créer"/>
-      {isPopupOpen && <Success isOpen={isPopupOpen} onClose={closePopup} message={popUpMessage}/>}
-
+      <ArticleForm
+        formTitle="Créer un article"
+        onSubmit={handleFormSubmit}
+        setFile={setFile}
+        action="Créer"
+      />
+      {isPopupOpen && (
+        <PopUp
+          isOpen={isPopupOpen}
+          type={popUpType}
+          onClose={closePopup}
+          message={popUpMessage}
+        />
+      )}
     </div>
   );
 };

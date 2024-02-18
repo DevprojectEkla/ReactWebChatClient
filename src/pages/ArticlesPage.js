@@ -1,7 +1,9 @@
 import {Link} from "react-router-dom"
 import ArticlesList from "../components/ArticlesList"
 import {Button} from "../components/Button"
-const ArticlesPage = () => {return (
+const ArticlesPage = () => {
+
+    return (
     <div>
     <div>
     <ArticlesList/>

@@ -1,7 +1,11 @@
-import {useLocation} from "react-router-dom";
+import {useLocation,useParams} from "react-router-dom";
 import Article from "../components/Article"
 const SingleArticlePage = () => {const location = useLocation();
-    const { article,index } = location.state || {}
+  window.scrollTo(0, 0);
+    const { article } = location.state || {}
+                   const index = useParams();
+                    
+    console.log("INDEX",index)
     return (
 
 

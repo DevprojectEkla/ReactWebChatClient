@@ -1,7 +1,7 @@
 // Your main component using ArticleForm
 import React, { useState } from "react";
 import ArticleForm from "../components/ArticleForm";
-import Success from "../components/Success";
+import PopUp from "../components/PopUp";
 import { apiBaseUrl, MUTLIPART_BOUNDARY } from "config";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -76,7 +76,7 @@ const UpdateArticlePage = () => {
         onSubmit={handleFormSubmit}
         action="Editer"
       />
-      {isPopupOpen && <Success isOpen={isPopupOpen} onClose={closePopup} message={popUpMessage} />}
+      {isPopupOpen && <PopUp type={'success'} isOpen={isPopupOpen} onClose={closePopup} message={popUpMessage} />}
     </div>
   );
 };

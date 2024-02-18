@@ -1,171 +1,227 @@
-import {useState, useEffect} from "react"
-import {Link} from 'react-router-dom'
-import {Button} from "./Button";
+import {
+    BrowseButton,
+  FormContainer,
+  H1,
+  InputLabelContainer,
+  Label,
+  Input,
+  TextArea,
+  FileInput,
+  SubmitForm,
+  ErrorMessage,
+  SuccessMessage,
+} from "../styles/FormStyles";
+import { useState, useEffect } from "react";
+import { binaryStringToBytesArray, setSrcImg } from "../utils"
+import { Link } from "react-router-dom";
+import { Button } from "./Button";
 import DynamicImageComponent from "./DynamicImageComponent";
 
-const ArticleForm = ({formTitle, onSubmit, action,article}) => {
-    const [date,setDate] = useState("")
-    const [title,setTitle] = useState("");
-    const [fileInput,setFileInput] = useState(null);
-    const [file,setFile] = useState(null)
-    const [content,setContent] = useState("");
-    const [author,setAuthor] = useState("");
-    const [body,setBody] = useState("");
-    const [type,setType] = useState("");
-    const [filename,setFileName] = useState("");
-    const [isSet, setIsSet] = useState(false);
+const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
+  const [date, setDate] = useState("");
+  const [title, setTitle] = useState("");
+  const [fileInput, setFileInput] = useState(null);
+  const [file, setFile] = useState(null);
+  const [content, setContent] = useState("");
+  const [rawData, setRawData] = useState([]);
+  const [encodedData, setEncodedData] = useState("");
+  const [author, setAuthor] = useState("");
+  const [body, setBody] = useState("");
+  const [type, setType] = useState("");
+  const [filename, setFileName] = useState("");
+  const [isSet, setIsSet] = useState(false);
 
-    const [titleError,setTitleError] = useState("");
-    const [authorError,setAuthorError] = useState("");
-    const [dateError,setDateError] = useState("");
+  const [titleError, setTitleError] = useState("");
+  const [authorError, setAuthorError] = useState("");
+  const [dateError, setDateError] = useState("");
 
-    useEffect(() => {
-        if (article && !isSet) {
-            
+  useEffect(() => {
+    if (article && !isSet) {
+      const data = article.file.content.data;
+        console.log("data before converting to set content",data)
+      setRawData(data);
+      setEncodedData(btoa(data));
 
-            setTitle(article.title);
-            setDate(article.date);
-            setBody(article.body)
-            setFileInput(article.file)
-            setFileName(article.file.fileName)
-            setType(article.file.mimeType)
-            setAuthor(article.author)
-            setContent(article.file.content)
-            setFile(article.file)
-            setIsSet(true)
-            
-        }
-    },[article,title,date,body,file,filename,type,author,isSet,setFile])
-    const handleSubmit = (e) => {
+      setTitle(article.title);
+      setDate(article.date);
+      setBody(article.body);
+      setFileInput(article.file);
+      setFileName(article.file.fileName);
+      setType(article.file.mimeType);
+      setAuthor(article.author);
+    // it is a bit complicated:
+        // when we don't change the image file of the already existing image article the content retrieved from the server is an array of uint8. To send it back to the server we need to convert it to a base64 encoded string, so StringFromCharCode gives us a binary String and btoa encode it in base64 string so the server can handle it the same way it does on a new input file throught handleFileChange(). Note that it is not only a serverside problem, in fact the submit button convert the good looking array of uint8 that we get from article.file.content.data into a useless string so that's why it is better to convert the array into a good looking string right here
+    if (article.file.content.data){
+      try {
+
+          const charArray = Array.from(data,byte => String.fromCharCode(byte))
+          setContent(btoa(charArray.join('')));}
+catch (error) {
+    console.log(`cannot set content with this data: ${article.file.content.data}`,error)
+
+try {
+    const toUint8Array = new Uint8Array(data)
+    console.log("content converted to uInt8:",toUint8Array)
+const convertedData = btoa(String.fromCharCode(...toUint8Array))
+    console.log("content set after trying btoa:",convertedData)
+    setContent(convertedData)
+} catch (error) {
+    console.log("cannot convert this form of data",error)
+    
+}
+}
+    }
+        // console.log("content in useEffect",String.fromCharCode(...article.file.content.data))
+      setFile(article.file);
+      setIsSet(true);
+    }
+  }, [
+    article,
+    title,
+    date,
+    body,
+    file,
+    filename,
+    type,
+    author,
+    isSet,
+    setFile,
+    setEncodedData,
+    setRawData,
+    rawData,
+    encodedData,
+  ]);
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!title) {
-      setTitleError('Title is required');
+      setTitleError("Title is required");
       return;
     }
 
     if (!author) {
-      setAuthorError('Author is required');
+      setAuthorError("Author is required");
       return;
     }
 
-    // Assuming onSubmit is a function passed as a prop to handle form submission
-    onSubmit({ title, author, body, content, type, filename});
+    onSubmit({ title, author, body, content, type, filename });
   };
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
 
     if (e.target.value.length > 100) {
-      setTitleError('Title must not exceed 100 characters');
+      setTitleError("Title must not exceed 100 characters");
     } else {
-      setTitleError('');
+      setTitleError("");
     }
   };
-        // let decoder = new TextDecoder("utf-8");
-    const handleFileChange = (e) => {
-        const fileInput = e.target.files[0]
-        setFileInput(fileInput)
-        setFile(fileInput);
-        setFileName(fileInput.name)
-        setType(fileInput.type)
-        // console.log('filename',fileInput.name)
-        // console.log('type',fileInput.type)
+  // let decoder = new TextDecoder("utf-8");
+  const handleFileChange = (e) => {
+    const fileInput = e.target.files[0];
+    setFileInput(fileInput);
+    setFile(fileInput);
+    setFileName(fileInput.name);
+    setType(fileInput.type);
+    // console.log('filename',fileInput.name)
+    // console.log('type',fileInput.type)
     // console.log("Input File",fileInput)
-const reader = new FileReader();
-        reader.onload = (event) => {const fileContent = event.target.result;
-            // console.log("File Content",fileContent)
-        // let decodedContent = decoder.decode(fileContent);
-// let        encoder = new TextEncoder()
-// let        encoded =encoder.encode(fileContent)
-let        encoded =btoa(fileContent)
-        // console.log(encoded)
-    setContent(encoded)
-        }
-        reader.readAsBinaryString(fileInput)
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const fileContent = event.target.result;
+        console.log("file content on input change:",fileContent)
 
-    }
+      // console.log("File Content",fileContent)
+      // let decodedContent = decoder.decode(fileContent);
+      // let        encoder = new TextEncoder()
+      // let        encoded =encoder.encode(fileContent)
+      let encoded = btoa(fileContent);
+       console.log("file content before encoding",fileContent) 
+      console.log("encoded data",encoded);
+      setContent(encoded);
 
+      setRawData(binaryStringToBytesArray(fileContent));
+        console.log("rawData:",rawData);
+    };
+    reader.readAsBinaryString(fileInput);
+  };
 
+  
   const handleAuthorChange = (e) => {
     setAuthor(e.target.value);
 
     if (e.target.value.length > 50) {
-      setAuthorError('Author name must not exceed 50 characters');
+      setAuthorError("Author name must not exceed 50 characters");
     } else {
-      setAuthorError('');
+      setAuthorError("");
     }
   };
 
-    return( 
-        <div className="formContainer">
-        <div className="inputLabelContainer">
+  return (
+    <FormContainer>
+      <H1>{formTitle}</H1>
 
-        <h1>{formTitle}
-        </h1>
-        </div>
+      <form encType="application/json" onSubmit={handleSubmit}>
+        <InputLabelContainer>
+          <Label>
+            Titre :
+            <Input
+              type="text"
+              value={title}
+              onChange={handleTitleChange}
+              onBlur={handleTitleChange}
+            />
+          </Label>
+        </InputLabelContainer>
 
-        <form  encType="application/json" onSubmit={handleSubmit}>
-        <div className="inputLabelContainer">
-      <label>
-        Titre :
-        <input
-          type="text"
-          value={title}
-          onChange={handleTitleChange}
-          onBlur={handleTitleChange}
-        />
-        {titleError && <span style={{ color: 'red' }}>{titleError}</span>}
-      </label>
+        <InputLabelContainer>
+          <Label>
+            Auteur:
+            <Input
+              type="text"
+              value={author}
+              onChange={handleAuthorChange}
+              onBlur={handleAuthorChange}
+            />
+          </Label>
+        </InputLabelContainer>
 
-      <br />
-        </div>
-        <div className="inputLabelContainer">
-      <label>
-        Auteur:
-        <input
-          type="text"
-          value={author}
-          onChange={handleAuthorChange}
-          onBlur={handleAuthorChange}
-        />
-        {authorError && <span style={{ color: 'red' }}>{authorError}</span>}
-      </label>
-      <br />
-        </div>
+        <InputLabelContainer>
+          <Label>
+            Corps de l'article:
+            <TextArea value={body} onChange={(e) => setBody(e.target.value)} />
+          </Label>
+        </InputLabelContainer>
 
-        <div className="inputLabelContainer">
-      <label>
-       Corps de l'article:
-        <textarea value={body} onChange={(e) => setBody(e.target.value)} />
-      </label>
+        <InputLabelContainer>
+          <Label>
+            Sélectionnez une image pour l'article :
+            <FileInput
+              id="file"
+              type="file"
+              onInput={handleFileChange}
+              name={filename}
+              accept="image/*"
+            />
+            <BrowseButton htmlFor="file">Parcourir</BrowseButton>
+          </Label>
+        </InputLabelContainer>
 
-        <br />
-        </div>
-        <div className="inputLabelContainer">
-        <label>
-        sélectionnez une image pour l'article :
+        <InputLabelContainer>
+          {fileInput && <Label>Image sélectionnée :</Label>}{" "}
+          {fileInput && (
+            <DynamicImageComponent
+              src={setSrcImg(rawData, type)}
+              alt={`uploaded: ${fileInput.title}`}
+            />
+          )}
+        </InputLabelContainer>
 
-          <input id="file"  type="file" onInput={handleFileChange} name={filename} accept="image/*" />
-        </label>
-      <br />
-        
-        </div>
-        <div className="inputLabelContainer">
-        {fileInput && <label>
-       Image sélectionnée :
-        </label> 
-}        { fileInput && <DynamicImageComponent src={`data:image/jpg;base64,${content}`} alt={`uploaded: ${fileInput.title}`}/>}
-        
-        </div>
-
-        <br />
-     <Button onClick={handleSubmit} type="submit">{action}</Button>
-    
-    </form>
-        
-        </div>
-)};        
-  
-       
-export default ArticleForm 
+        <Button onClick={handleSubmit} type="submit">
+          {action}
+        </Button>
+      </form>
+    </FormContainer>
+  );
+};
+export default ArticleForm;

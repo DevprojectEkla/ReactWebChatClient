@@ -5,14 +5,14 @@ import Footer from './components/Footer'
 import ArticlesPage from './pages/ArticlesPage'
 import Header from './components/Header';
 import Body from './components/Body';
-import SubscribeForm from './components/SubscribeForm';
-import MyComponent from './components/Circle';
+import ChatRoom from './components/ChatRoom';
 import Login from './components/Login';
 import SingleArticlePage from './pages/SingleArticlePage';
 import {HeaderProvider} from './contexts/HeaderContext';
 import {useScrollToTopContext} from './contexts/ScrollToTop';
 import {HelmetProvider} from 'react-helmet-async'
 import CreateArticlePage from './pages/CreateArticlePage';
+import CreateAccountPage from './pages/CreateAccountPage';
 import UpdateArticlePage from './pages/UpdateArticlePage'
 import StyledGlobal from './styles/BodyStyles';
 
@@ -25,6 +25,7 @@ const StyledApp = styled.div`
 
 function App() {
     const scrollPosition = useScrollToTopContext()
+    console.log("rerender")
     
   return (
       <HelmetProvider>
@@ -39,12 +40,13 @@ function App() {
       <Routes>
       <Route  path={"/"} exact element={<Body/>}></Route>
       <Route path={"login"} element={<Login/>}></Route>
-      <Route path={"subscribe"} element={<SubscribeForm/>}></Route>
+      <Route path={"subscribe"} element={<CreateAccountPage/>}></Route>
       <Route path={"articles/create"} element={<CreateArticlePage/>}></Route>
       <Route path={"articles/update/:id"} element={<UpdateArticlePage/>}></Route>
 
       <Route path={"articles"} element={<ArticlesPage/>}></Route>
       <Route path={"articles/detail/:id"} element={<SingleArticlePage/>}></Route>
+      <Route path={"chatRoom/"} element={<ChatRoom/>}></Route>
       </Routes>
       <div>
       <Footer/>

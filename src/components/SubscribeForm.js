@@ -1,144 +1,193 @@
-import {useState} from "react"
-import {Button} from "./Button";
-import  DynamicImageComponent from "./DynamicImageComponent";
+import {
+    BrowseButton,
+  FormContainer,
+  H1,
+  InputLabelContainer,
+  Label,
+  Input,
+  TextArea,
+  FileInput,
+  SubmitForm,
+  ErrorMessage,
+  SuccessMessage,
+} from "../styles/FormStyles";
 
-const SubscribeForm = ({onSubmit,file, setFile}) => {
-    const [username,setUserName] = useState("");
-    const [password,setPassword] = useState("")
-    const [date,setDate] = useState("")
-    const [quote,setQuote] = useState("");
-    const [fileInput,setFileInput] = useState(null);
-    const [content,setContent] = useState("");
+import { useState } from "react";
+import { binaryStringToBytesArray, setSrcImg } from "../utils";
+import { Button } from "./Button";
+import DynamicImageComponent from "./DynamicImageComponent";
 
-    const [userNameError,setUserNameError] = useState("");
-    const [passwordError,setPasswordError] = useState("");
-    const [dateError,setDateError] = useState("")
+const SubscribeForm = ({ onSubmit }) => {
+  const [username, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [date, setDate] = useState("");
+  const [quote, setQuote] = useState("");
+  const [fileInput, setFileInput] = useState(null);
+  const [file, setFile] = useState(null);
+  const [content, setContent] = useState("");
+  const [rawData, setRawData] = useState("");
 
-    const handleSubmit = (e) => {
+  const [userNameError, setUserNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [dateError, setDateError] = useState("");
+
+  const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (!email) {
+      setEmailError("a valid email is required");
+    }
     if (!username) {
-      setUserNameError('Title is required');
+      setUserNameError("a pseudo is required");
       return;
     }
 
     if (!password) {
-      setPasswordError('Author is required');
+      setPasswordError("A password is required");
       return;
     }
 
     // Assuming onSubmit is a function passed as a prop to handle form submission
-    onSubmit({ username, password,file, content});
+    onSubmit({ username, email, quote, password, file, content });
+  };
+  const handleEmailChanged = (e) => {
+    setEmail(e.target.value);
+
+    if (e.target.value.length > 100) {
+      setEmailError("email must not exceed 100 characters");
+    } else {
+      setEmailError("");
+    }
   };
 
   const handleUserNameChanged = (e) => {
     setUserName(e.target.value);
 
     if (e.target.value.length > 100) {
-      setUserNameError('Title must not exceed 100 characters');
+      setUserNameError("pseudo must not exceed 100 characters");
     } else {
-      setUserNameError('');
+      setUserNameError("");
     }
   };
-        // let decoder = new TextDecoder("utf-8");
-    const handleFileChange = (e) => {
-        const fileInput = e.target.files[0]
-        setFile(fileInput);
-        setFileInput(fileInput)
-    console.log("Input File",fileInput)
-const reader = new FileReader();
-        reader.onload = (event) => {const fileContent = event.target.result;console.log("File Content",fileContent)
-        // let decodedContent = decoder.decode(fileContent);
-// let        encoder = new TextEncoder()
-// let        encoded =encoder.encode(fileContent)
-let        encoded =btoa(fileContent)
-        console.log(encoded)
-    setContent(encoded)
-        }
-        reader.readAsBinaryString(fileInput)
-
-    }
-
+  // let decoder = new TextDecoder("utf-8");
+  const handleFileChange = (e) => {
+    const fileInput = e.target.files[0];
+    setFile(fileInput);
+    setFileInput(fileInput);
+    // console.log("Input File", fileInput);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const fileContent = event.target.result;
+      // console.log("File Content", fileContent);
+      // let decodedContent = decoder.decode(fileContent);
+      // let        encoder = new TextEncoder()
+      // let        encoded =encoder.encode(fileContent)
+      setRawData(binaryStringToBytesArray(fileContent));
+      let encoded = btoa(fileContent);
+      // console.log("base64 encoding:", encoded);
+      setContent(encoded);
+    };
+    reader.readAsBinaryString(fileInput);
+  };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
 
     if (e.target.value.length > 50) {
-      setPasswordError('Author name must not exceed 50 characters');
+      setPasswordError("Author name must not exceed 50 characters");
     } else {
-      setPasswordError('');
+      setPasswordError("");
     }
   };
 
-    return( 
-        <div className="formContainer">
-        <div className="inputLabelContainer">
-        <h1>Créer votre compte
-        </h1>
-        </div>
+  return (
+    <FormContainer>
+      <InputLabelContainer>
+        <H1>Créer votre compte</H1>
+      </InputLabelContainer>
 
-        <form  encType="application/json" onSubmit={handleSubmit}>
-        <div className="inputLabelContainer">
-      <label>
-        Email:
-        <input
-          type="text"
-          value={username}
-          onChange={handleUserNameChanged}
-          onBlur={handleUserNameChanged}
-        />
-        {userNameError && <span style={{ color: 'red' }}>{userNameError}</span>}
-      </label>
-        </div>
-        <div className="inputLabelContainer">
-      <br />
-      <label>
-        mot de passe:
-        <input
-          type="password"
-          value={password}
-          onChange={handlePasswordChange}
-          onBlur={handlePasswordChange}
-        />
-        {passwordError && <span style={{ color: 'red' }}>{passwordError}</span>}
-      </label>
-      <br/>
+      <form encType="application/json" onSubmit={handleSubmit}>
+        <InputLabelContainer>
+          <Label>
+            Pseudo:
+            <Input
+              type="text"
+              value={username}
+              onChange={handleUserNameChanged}
+              onBlur={handleUserNameChanged}
+            />
+            {userNameError && <ErrorMessage>{userNameError}</ErrorMessage>}
+          </Label>
+        </InputLabelContainer>
 
-        <div className="inputLabelContainer">
+        <InputLabelContainer>
+          <Label>
+            Email:
+            <Input
+              type="text"
+              value={email}
+              onChange={handleEmailChanged}
+              onBlur={handleEmailChanged}
+            />
+            {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+          </Label>
+        </InputLabelContainer>
 
-      <label className="inputLabelContainer" for="quote">
-        Une citation:
-        <textarea id="quote"value={quote} onChange={(e) => setQuote(e.target.value)} />
-      </label>
-        <br />
-        </div>
-        <div className="inputLabelContainer">
-        <label>
-        choisissez une image pour votre avatar:
-          <input id="file"  type="file" onInput={handleFileChange} accept="image/*" />
-        </label>
-      <br />
-        </div>
-        <div className="inputLabelContainer">
+        <InputLabelContainer>
+          <Label>
+            Mot de passe:
+            <Input
+              type="password"
+              value={password}
+              onChange={handlePasswordChange}
+              onBlur={handlePasswordChange}
+            />
+            {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+          </Label>
+        </InputLabelContainer>
 
-        {fileInput && <label>
-        Votre avatar:
-        </label> 
-}        { fileInput && <DynamicImageComponent src={`data:image/png;base64,${btoa(content)}`} alt={`uploaded: ${fileInput.title}`}></DynamicImageComponent>}
+        <InputLabelContainer>
+          <Label>
+            Une citation:
+            <TextArea
+              id="quote"
+              value={quote}
+              onChange={(e) => setQuote(e.target.value)}
+            />
+          </Label>
+        </InputLabelContainer>
 
-        </div>
-        <div className="submitForm"> 
+        <InputLabelContainer>
+          <Label>
+            Choisissez une image pour votre avatar:
+            <FileInput
+              id="file"
+              type="file"
+              onInput={handleFileChange}
+              accept="image/*"
+            /><BrowseButton htmlFor="file">Parcourir</BrowseButton>
+          </Label>
+        </InputLabelContainer>
 
-        <br/>
-      <Button onClick={handleSubmit} type="submit">
-        créer mon compte</Button></div>
+        <InputLabelContainer>
+          {fileInput && <Label>Votre avatar:</Label>}{" "}
+          {fileInput && (
+            <DynamicImageComponent
+              src={setSrcImg(rawData, fileInput.type)}
+              alt={`uploaded: ${fileInput.title}`}
+            />
+          )}
+        </InputLabelContainer>
 
-        <br/>
-        </div>
-    </form>
-        
-        </div>
-)};        
-  
-       
-export default SubscribeForm 
+        <SubmitForm>
+          <Button onClick={handleSubmit} type="submit">
+            Créer mon compte
+          </Button>
+        </SubmitForm>
+      </form>
+    </FormContainer>
+  );
+};
+export default SubscribeForm;

@@ -20,7 +20,7 @@ const CustomButton = styled.button.attrs({type: 'button'})
 
 const clickCallBack = async () =>{
     alert('button clicked')
-    let response = await fetch('http://localhost:8000/api/articles')
+    let response = await fetch('/api/articles')
     let data = await response.json();
     
 

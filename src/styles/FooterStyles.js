@@ -6,7 +6,6 @@ background-color:${THEME_COLOR};
 width: 100%;
 color: #fff;
 padding: 20px ;
-box-sizing: border-box;
 bottom: 0;
 left:0;
 margin-top:20%;
