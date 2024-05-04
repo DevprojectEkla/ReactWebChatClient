@@ -3,6 +3,7 @@ import UserList from "./UserList";
 import WebCam from "./WebCam";
 import styled from "styled-components";
 import io from "socket.io-client";
+import { logger } from "../utils/logger"
 import { HOVER_EFFECT, THEME_COLOR, apiBaseUrl, isDevelopment } from "config";
 import {
   getUserName,
@@ -154,42 +155,42 @@ const ChatRoom = () => {
     io(apiBaseUrl, { query: { userData: JSON.stringify(userData) } });
 
   const handleMessage = (data) => {
-    console.log("Received Message", data);
+    logger.debug("Received Message", data);
     setUserSenderId(data.sender);
-    console.log("ID", data.sender);
+    logger.debug("ID", data.sender);
     setMessages((prevMessages) => [
       ...prevMessages,
       { sender: data.sender, text: data.text },
     ]);
-    // console.log("chatContainerRef values:",chatContainerRef.current,chatContainerRef.current.scrollTop,chatContainerRef.current.scrollHeight )
+    // logger.debug("chatContainerRef values:",chatContainerRef.current,chatContainerRef.current.scrollTop,chatContainerRef.current.scrollHeight )
     chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    // console.log("dynamic value for chatContainerRef:",chatContainerRef.current.scrollTop)
+    // logger.debug("dynamic value for chatContainerRef:",chatContainerRef.current.scrollTop)
   };
   const scrollToBottom = () => {
     chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    // console.log("chatContainerRef values from scrollToBottom function:",chatContainerRef.current,chatContainerRef.current.scrollTop,chatContainerRef.current.scrollHeight )
+    // logger.debug("chatContainerRef values from scrollToBottom function:",chatContainerRef.current,chatContainerRef.current.scrollTop,chatContainerRef.current.scrollHeight )
   };
   const handleSendMessage = async () => {
     if (newMessage.trim() !== "" && socket) {
       const username = await getUserName();
       socket.emit("message", { text: newMessage, sender: username });
       setNewMessage("");
-      // console.log("chatContainerRef values:",chatContainerRef.current,chatContainerRef.current.scrollTop,chatContainerRef.current.scrollHeight )
+      // logger.debug("chatContainerRef values:",chatContainerRef.current,chatContainerRef.current.scrollTop,chatContainerRef.current.scrollHeight )
     }
   };
 
   const handleEmojiClick = () => {
-    console.log("emoji menu clicked");
+    logger.debug("emoji menu clicked");
   };
   useEffect(() => {
     const initializeSocket = async () => {
       const cookieData = await getCookie("session_data");
-      // console.log(cookieData)
+      // logger.debug(cookieData)
 
       // Initialize the socket
       if (socket === null) {
         const userData = cookieData;
-        console.log("user data from cookie for socket io", userData);
+        logger.debug("user data from cookie for socket io", userData);
 
         const socketInstance = isDevelopment
           ? createIoDevClient(userData)
@@ -197,7 +198,7 @@ const ChatRoom = () => {
         setSocket(socketInstance);
         setCurrentUserData(userData);
 
-        // console.log("socket created", socket);
+        // logger.debug("socket created", socket);
       }
     };
     initializeSocket();
@@ -205,7 +206,7 @@ const ChatRoom = () => {
     // Cleanup when the component unmounts
     return () => {
       if (socket) {
-        console.log("socket disconnection", socket);
+        logger.debug("socket disconnection", socket);
         socket.disconnect();
       }
     };
@@ -216,16 +217,16 @@ const ChatRoom = () => {
     if (socket) {
       socket.on("message", handleMessage);
       scrollToBottom();
-      console.log("handling message", socket);
+      logger.debug("handling message", socket);
 
       socket.emit("joinRoom", { room: "chatRoom" });
 
       // Listen for the 'userJoined' event
       socket.on("userJoined", (data) => {
-        console.log("new user data:", data);
+        logger.debug("new user data:", data);
 
         setNewUserData(data);
-        console.log(`User ${data.username} joined the chat room`);
+        logger.debug(`User ${data.username} joined the chat room`);
 
         setUsers((prevUsers) => {
           if (prevUsers.length === 0) {
@@ -242,7 +243,7 @@ const ChatRoom = () => {
 
       // Listen for the 'userLeft' event
       socket.on("userLeft", (data) => {
-        console.log(`User ${data.username} left the chat room`);
+        logger.debug(`User ${data.username} left the chat room`);
         setUsers((prevUsers) =>
           prevUsers.filter((user) => user.userData.username !== data.username)
         );

@@ -5,6 +5,7 @@ import PopUp from "../components/PopUp";
 import { usePopup } from "../utils";
 import { apiBaseUrl, MUTLIPART_BOUNDARY } from "config";
 import { useNavigate } from "react-router-dom";
+import { logger } from '../utils/logger'
 
 const CreateArticlePage = () => {
   const [file, setFile] = useState(null);
@@ -20,7 +21,7 @@ const CreateArticlePage = () => {
   };
 
   const handleFormSubmit = async (formData) => {
-    console.log("FORMDATA:", formData);
+    logger.debug("FORMDATA:", formData);
 
     // Make an HTTP request to your server to create a new article using formData
     // You can use libraries like axios or fetch for making HTTP requests
@@ -34,7 +35,7 @@ const CreateArticlePage = () => {
       fileData.append("type", formData.type);
       fileData.append("content", formData.content);
 
-      console.log("FILEDATA", fileData);
+      logger.debug("FILEDATA", fileData);
       const response = await fetch(apiBaseUrl + "/api/articles/create", {
         method: "POST",
         body: fileData,
@@ -42,10 +43,10 @@ const CreateArticlePage = () => {
           "Content-Type": `multipart/form-data; boundary="${MUTLIPART_BOUNDARY}"`,
         },
       });
-      // .then(response => response.json().then(data => console.log(data)).catch(error => console.error("Error: ",error)))
+      // .then(response => response.json().then(data => logger.debug(data)).catch(error => console.error("Error: ",error)))
       if (response.ok) {
         // Handle successful article creation
-        console.log("Article created successfully");
+        logger.debug("Article created successfully");
 
         setSuccess(true);
 
@@ -56,7 +57,7 @@ const CreateArticlePage = () => {
         );
       } else {
         // Handle error
-        console.log(response)
+        logger.debug(response)
         configurePopup(
           true,
           "failure",

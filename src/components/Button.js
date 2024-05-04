@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { THEME_COLOR } from 'config'
+import { logger } from "../utils/logger"
 const CustomButton = styled.button.attrs({type: 'button'})
 
 `
@@ -24,7 +25,7 @@ const clickCallBack = async () =>{
     let data = await response.json();
     
 
-console.log("Articles:",data)
+logger.debug("Articles:",data)
 
 }
 

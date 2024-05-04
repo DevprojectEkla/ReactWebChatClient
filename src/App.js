@@ -25,7 +25,7 @@ const StyledApp = styled.div`
 
 function App() {
     const scrollPosition = useScrollToTopContext()
-    console.log("rerender")
+    // console.log("rerender")
     
   return (
       <HelmetProvider>

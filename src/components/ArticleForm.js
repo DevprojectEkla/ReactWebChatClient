@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 import { binaryStringToBytesArray, setSrcImg } from "../utils"
 import { Link } from "react-router-dom";
 import { Button } from "./Button";
+import { logger } from "../utils/logger";
 import DynamicImageComponent from "./DynamicImageComponent";
 
 const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
@@ -38,7 +39,7 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
   useEffect(() => {
     if (article && !isSet) {
       const data = article.file.content.data;
-        console.log("data before converting to set content",data)
+        logger.debug("data before converting to set content",data)
       setRawData(data);
       setEncodedData(btoa(data));
 
@@ -57,21 +58,21 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
           const charArray = Array.from(data,byte => String.fromCharCode(byte))
           setContent(btoa(charArray.join('')));}
 catch (error) {
-    console.log(`cannot set content with this data: ${article.file.content.data}`,error)
+    logger.debug(`cannot set content with this data: ${article.file.content.data}`,error)
 
 try {
     const toUint8Array = new Uint8Array(data)
-    console.log("content converted to uInt8:",toUint8Array)
+    logger.debug("content converted to uInt8:",toUint8Array)
 const convertedData = btoa(String.fromCharCode(...toUint8Array))
-    console.log("content set after trying btoa:",convertedData)
+    logger.debug("content set after trying btoa:",convertedData)
     setContent(convertedData)
 } catch (error) {
-    console.log("cannot convert this form of data",error)
+    logger.debug("cannot convert this form of data",error)
     
 }
 }
     }
-        // console.log("content in useEffect",String.fromCharCode(...article.file.content.data))
+        // logger.debug("content in useEffect",String.fromCharCode(...article.file.content.data))
       setFile(article.file);
       setIsSet(true);
     }
@@ -123,25 +124,25 @@ const convertedData = btoa(String.fromCharCode(...toUint8Array))
     setFile(fileInput);
     setFileName(fileInput.name);
     setType(fileInput.type);
-    // console.log('filename',fileInput.name)
-    // console.log('type',fileInput.type)
-    // console.log("Input File",fileInput)
+    // logger.debug('filename',fileInput.name)
+    // logger.debug('type',fileInput.type)
+    // logger.debug("Input File",fileInput)
     const reader = new FileReader();
     reader.onload = (event) => {
       const fileContent = event.target.result;
-        console.log("file content on input change:",fileContent)
+        logger.debug("file content on input change:",fileContent)
 
-      // console.log("File Content",fileContent)
+      // logger.debug("File Content",fileContent)
       // let decodedContent = decoder.decode(fileContent);
       // let        encoder = new TextEncoder()
       // let        encoded =encoder.encode(fileContent)
       let encoded = btoa(fileContent);
-       console.log("file content before encoding",fileContent) 
-      console.log("encoded data",encoded);
+       logger.debug("file content before encoding",fileContent) 
+      logger.debug("encoded data",encoded);
       setContent(encoded);
 
       setRawData(binaryStringToBytesArray(fileContent));
-        console.log("rawData:",rawData);
+        logger.debug("rawData:",rawData);
     };
     reader.readAsBinaryString(fileInput);
   };

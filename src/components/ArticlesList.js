@@ -1,5 +1,6 @@
 import { apiBaseUrl, THEME_COLOR } from "config"; //ATTENTION: cette import utilise un symlink client/node_modules/config.js poitant vers ../../config.rs ce qui correspond à la racine du projet le fichier config devant être partagé entre server/ et client/
 import React, { useState, useEffect } from "react";
+import { logger } from "../utils/logger"
 import { Link } from "react-router-dom";
 import { CustomButton } from "./Button";
 import DynamicImageComponent from "./DynamicImageComponent";
@@ -27,9 +28,9 @@ useEffect(() => {
   //   const cachedData = localStorage.getItem("cachedData");
   //     const parsedData = JSON.parse(cachedData);
   //     if (parsedData && Object.keys(parsedData).length > 0 && !reFetch) {
-  //       console.log("CACHED", cachedData)
+  //       logger.debug("CACHED", cachedData)
   //     setArticles(JSON.parse(cachedData));
-  //         console.log(reFetch)
+  //         logger.debug(reFetch)
   //   } else {
   //     getArticles();
   //       setRefetch(false)
@@ -44,7 +45,7 @@ useEffect(() => {
             
         }
         const sessionId = sessionData.id
-        console.log("getArticles is triggered with session",sessionId)
+        logger.debug("getArticles is triggered with session",sessionId)
         let response = await fetch(apiBaseUrl + "/api/articles", {method: 'GET', headers:{
             'Content-type':'application/json',
             'Cookie':`session_data=${sessionData}`,
@@ -58,21 +59,21 @@ useEffect(() => {
       // localStorage.setItem("cachedData", JSON.stringify(data));
     } catch (error) {
       setError(error.message);
-      console.log(error);
+      logger.debug(error);
     }
   };
   const setImgSrc = (article) => {
     // Assuming article is your object containing the image data
     const imageData = article.file.content.data;
-    // console.log(imageData)
+    // logger.debug(imageData)
 
     // Create a Uint8Array from the array of integers
     const uint8Array = new Uint8Array(imageData);
-    // console.log(decoded)
+    // logger.debug(decoded)
 
     // Create a Blob from the Uint8Array
     const blob = new Blob([uint8Array], { type: article.file.mimeType });
-    // console.log(blob)
+    // logger.debug(blob)
 
     // Create a data URL for the Blob
     const dataURL = URL.createObjectURL(blob);

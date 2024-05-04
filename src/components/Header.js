@@ -1,12 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { apiBaseUrl,isDevelopment } from "config";
 import { styled } from "styled-components";
 import { useHeaderContext } from "../contexts/HeaderContext";
 import { useScrollToTopContext } from "../contexts/ScrollToTop";
 import { setSrcImg } from "../utils";
+import { logger } from "../utils/logger"
 import { Button } from "./Button";
 import {
+    ProfileContainer,
+    MenuItem,
+    MenuContainer,
+    ArrowIcon,
   MedallionImage,
   MedallionContainer,
   CustomButton,
@@ -28,9 +33,40 @@ const Header = () => {
   const location = useLocation();
   const [userData, setUserData] = useState({});
   const [avatar, setAvatar] = useState("");
+ const [isMenuVisible, setMenuVisible] = useState();
+    const menuRef = useRef(null)
+
   const scrollPos = useScrollToTopContext();
   const { title: contextTitle } = useHeaderContext();
   const currentPageName = getPageNameFromLocation(location, contextTitle);
+
+
+  const handleItemClick = (itemName) => {
+    alert(`Selected option: ${itemName}`);
+  };
+useEffect(() => {
+    // Function to handle clicks outside the menu container
+    const handleOutsideClick = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuVisible(false);
+      }
+    };
+
+    // Attach event listener when menu is visible
+    if (isMenuVisible) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+
+    // Remove event listener when menu is hidden
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [isMenuVisible]);  
+
+    const toggleMenu = () => {
+    setMenuVisible(!isMenuVisible);
+  };
+  
   function getPageNameFromLocation(location, contextTitle) {
     if (location.pathname.includes("articles/detail/")) {
       return contextTitle;
@@ -48,7 +84,7 @@ const Header = () => {
 
 
     const sessionData = await getCookie("session_data");
-      console.log(sessionData)
+      logger.debug(sessionData)
         const avatarHash = sessionData.avatar.name;
  const response = await fetch(apiBaseUrl + `/api/avatars/${avatarHash}`, {
       method: "GET",
@@ -59,9 +95,9 @@ const Header = () => {
      credentials: isDevelopment?'include':'same-origin'//this is cors related and is key to include cookies in request from different client servers (if the client is hosted on a different server than the backend), if the app uses a frontend and a backend server separately like in development of a react app
     });
 
-    // console.log("avatar : ", response);
+    // logger.debug("avatar : ", response);
     const data = await response.json();
-    // console.log("data avatar:", data);
+    // logger.debug("data avatar:", data);
     const urlImg = setSrcImg(data.data);
     setAvatar(urlImg);
 
@@ -95,7 +131,7 @@ const Header = () => {
       setUserData(userData);
       await fetchAvatar(userData);
     } catch (err) {
-      console.log(
+      logger.debug(
         "No Session Cookie available. Please try to login to get better user experience"
       );
       setUserData(null);
@@ -118,7 +154,7 @@ const Header = () => {
   }}
   const checkForSessionCookie = () => {
     const cookie = document.cookie;
-    console.log("Session Cookie retrieved:", decodeURIComponent(cookie));
+    logger.debug("Session Cookie retrieved:", decodeURIComponent(cookie));
     if (cookie) {
       return true;
     } else {
@@ -133,6 +169,7 @@ const Header = () => {
             <CustomButton onClick={handleBackButtonClick}>Retour</CustomButton>
           </NavItem>
           <NavItem>
+
             <CustomButton>
               <Link to={"/articles/create"}> Créer un Article </Link>
             </CustomButton>
@@ -165,16 +202,27 @@ const Header = () => {
       <>
         {userData.avatar && (
           <MedallionContainer size={50}>
+            { isMenuVisible && (
+            <MenuContainer ref={menuRef}>
+        <MenuItem onClick={() => handleItemClick('Paramètre du compte')}>Paramètre du compte</MenuItem>
+        <MenuItem onClick={() => handleItemClick('Configuration')}>Configuration</MenuItem>
+        <MenuItem onClick={logout}> <Link to="/">Logout</Link></MenuItem>
+      </MenuContainer>
+            )  }
+        
             <MedallionImage src={avatar} alt="Avatar Utilisateur" />
           </MedallionContainer>
         )}
-        <label>{userData.username}</label>
+        <ProfileContainer> 
+        <label>{userData.username}
+        </label>
+
+        <ArrowIcon onClick={toggleMenu}/>
+
+        </ProfileContainer>
       </>
     )}
-    <CustomButton onClick={logout}>
-      <Link to="/">Logout</Link>
-    </CustomButton>
-  </>
+       </>
 )}
 
 

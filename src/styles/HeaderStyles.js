@@ -65,6 +65,53 @@ export const MedallionImage = styled.img`
   height: 100%;
   object-fit: cover;
 `;
+export const ArrowIcon = styled.div`
+  position: absolute;
+  width: 1;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid aliceblue;
+
+  cursor: pointer;
+opacity: 0.2;
+  transition: opacity 0.3s ease-in-out;
+
+  &:hover {
+    opacity: 1;
+  }
+`;
+export const ProfileContainer = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+export const MenuContainer = styled.div`
+  position: absolute;
+  top: 60px; /* Adjust this value based on the header height */
+  right: 10px;
+  width: 150px;
+  background-color: ${baseColor};
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow-y: auto;
+  max-height: 200px;
+&::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: 12px;
+    border-width: 0 5px 5px;
+    border-style: solid;
+    border-color: transparent transparent #ccc;
+`;
+
+export const MenuItem = styled.div`
+  padding: 10px;
+  cursor: pointer;
+  &:hover {
+    background-color: ${baseColor};
+  }
+`;
 
 // Additional styles as needed
 

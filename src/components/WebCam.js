@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { logger } from "../utils/logger"
 import io from "socket.io-client";
 import { apiBaseUrl, MY_TURN_SERVER } from "config";
 import styled from "styled-components";
@@ -53,7 +54,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
       .then((stream) => {
         localStream.current = stream;
         localVideoRef.current.srcObject = stream;
-        console.log(localStream);
+        logger.debug(localStream);
       })
       .catch((error) => {
         console.error("Error accessing media devices:", error);
@@ -61,19 +62,19 @@ const WebCam = ({ users, currentUserData, socket }) => {
   };
   const addTracksToPc = async (pc) => {
     if (localStream.current) {
-      console.log("localStream detected: adding tracks to PCs");
+      logger.debug("localStream detected: adding tracks to PCs");
       const tracks = await localStream.current.getTracks();
-      console.log("Tracks from the client stream", tracks);
+      logger.debug("Tracks from the client stream", tracks);
 
       // Add each track to the peer connection
       tracks.forEach((track) => {
-        console.log("setting tracks for PC:", pc);
+        logger.debug("setting tracks for PC:", pc);
         pc.addTrack(track, localStream.current);
       });
     }
   };
   const initPeerConnection = async (userId) => {
-    console.log("Initializing New Peer Connection for user:", userId);
+    logger.debug("Initializing New Peer Connection for user:", userId);
     const configuration = {
       iceServers: [
         {
@@ -88,7 +89,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
     peerConnection.current = pc;
 
     setPeerConnections(peerConnections.set(userId, pc));
-    console.log("new peer added to PeerConnections", peerConnections);
+    logger.debug("new peer added to PeerConnections", peerConnections);
     await addTracksToPc(pc);
     return pc;
   };
@@ -134,7 +135,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
         .find((receiver) => receiver.track === track);
       if (receiver) {
         track.stop();
-        console.log("track stopped from local pc", track, receiver);
+        logger.debug("track stopped from local pc", track, receiver);
       } else {
         console.warn("receiver not found for track:", track);
       }
@@ -152,12 +153,12 @@ const WebCam = ({ users, currentUserData, socket }) => {
         .createOffer(offerOptions)
         .then((offer) => {
           setNewOffer(offer);
-          console.log("setting new offer:", newOffer);
+          logger.debug("setting new offer:", newOffer);
           peerConnection.current.setLocalDescription(newOffer);
         })
 
         .then(() => {
-          console.log("new offer", peerConnection.current.localDescription);
+          logger.debug("new offer", peerConnection.current.localDescription);
           socket.broadcast.emit(
             "offer",
             peerConnection.current.localDescription
@@ -171,21 +172,21 @@ const WebCam = ({ users, currentUserData, socket }) => {
   const getNewStreams = (pc) => {
     //this gathers the stream tracks send by the remote peer
     //by listening to a specific event
-    console.log("getting new streams from remote client");
+    logger.debug("getting new streams from remote client");
     pc.ontrack = (event) => {
       const stream = event.streams[0];
-      console.log("Streams", event.streams);
-      // console.log("Tracks",event.streams[0].getTracks())
+      logger.debug("Streams", event.streams);
+      // logger.debug("Tracks",event.streams[0].getTracks())
       setVideoStream(stream);
       if (event.streams[0]) {
-        console.log("Stream List on user joined", userStreamList);
+        logger.debug("Stream List on user joined", userStreamList);
         if (!userStreamList.has(socketIdRef.current)) {
           setUserStreamList((prevMap) =>
             prevMap.set(socketIdRef.current, stream)
           );
         }
 
-        console.log("stream:", stream);
+        logger.debug("stream:", stream);
       }
     };
   };
@@ -194,16 +195,16 @@ const WebCam = ({ users, currentUserData, socket }) => {
   //     peerConnection.current &&
   //     users[users.length ? users.length - 1 : null] !== currentUserData.username
   //   ) {
-  //     console.log("new user joined, sending new offer stream");
+  //     logger.debug("new user joined, sending new offer stream");
   //       getNewStreams()
   //     renewOfferLocalStream();
-  //     console.log("new users", users);
+  //     logger.debug("new users", users);
   //   }
   // }, [users, currentUserData, peerConnection,videoStream]);
   useEffect(() => {
     socket.on("userLeft", (data) => {
       const id = data.socketId;
-      console.log(
+      logger.debug(
         `user ${data.username} has left the room, dropping peerConnection of ${
           data.socketId
         } now. see coherence with the list of users: ${JSON.stringify(
@@ -211,21 +212,21 @@ const WebCam = ({ users, currentUserData, socket }) => {
         )}`
       );
       if (peerConnections.has(data.socketId)) {
-        console.log("dropping :", data.socketId);
+        logger.debug("dropping :", data.socketId);
         const pcToDrop = peerConnections.get(id);
         pcToDrop.close();
         peerConnections.delete(id);
-        console.log("peerConnections after delete", peerConnections);
+        logger.debug("peerConnections after delete", peerConnections);
       }
       if (userStreamList.has(id)) {
         const streamToDrop = userStreamList.get(id);
-        console.log("droping stream of value:", streamToDrop, id);
-        console.log("list of remote Vid Ref before cleaning", remoteVideoRefs);
-        console.log(
+        logger.debug("droping stream of value:", streamToDrop, id);
+        logger.debug("list of remote Vid Ref before cleaning", remoteVideoRefs);
+        logger.debug(
           "list of remote Vid streams before cleaning",
           remoteStreams
         );
-        console.log(
+        logger.debug(
           "diff between ref, stream",
           remoteVideoRefs,
           streamToDrop
@@ -240,10 +241,10 @@ const WebCam = ({ users, currentUserData, socket }) => {
         );
       }
 
-      console.log("droping stream:", userStreamList.get(id));
-      console.log("videoStream:", videoStream);
-      console.log("list of remote Vid Ref", remoteVideoRefs);
-      console.log("list of remote Vid streams", remoteStreams);
+      logger.debug("droping stream:", userStreamList.get(id));
+      logger.debug("videoStream:", videoStream);
+      logger.debug("list of remote Vid Ref", remoteVideoRefs);
+      logger.debug("list of remote Vid streams", remoteStreams);
     });
   }, [
     socket,
@@ -267,7 +268,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
   }, []);
   useEffect(() => {
     if (videoStream) {
-      console.log("adding element to RemoteStreams array");
+      logger.debug("adding element to RemoteStreams array");
       setRemoteStreams((prevStreams) => [...prevStreams, videoStream]);
     }
   }, [videoStream, socket]);
@@ -279,7 +280,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
         data.username === currentUserData.username &&
         data.users.length === 1
       ) {
-        console.log("Salut t'es tout seul mon vieux");
+        logger.debug("Salut t'es tout seul mon vieux");
       }
       //the user connect for the first time and triggers userJoined with its own data
       // but he is not alone in the room
@@ -300,7 +301,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
       //the user is already connected and a new user join the room
       else if (data.username !== currentUserData.username) {
         const userId = data.socketId;
-        console.log(
+        logger.debug(
           `new user joined: ${data.username}, with socket: ${userId}, initializing PeerConnection`
         );
         const pc = await initPeerConnection(userId);
@@ -313,21 +314,21 @@ const WebCam = ({ users, currentUserData, socket }) => {
   // Handle signaling messages
   useEffect(() => {
     socket.on("offer", (offer) => {
-      console.log("Received offer:", offer);
-      console.log("setting newOffer with the received offer:", offer);
+      logger.debug("Received offer:", offer);
+      logger.debug("setting newOffer with the received offer:", offer);
       socketIdRef.current = offer.id;
       if (peerConnections.has(offer.id)) {
-        console.log("got an offer from", offer.id);
+        logger.debug("got an offer from", offer.id);
       }
       if (!peerConnections.has(offer.id)) {
-        console.log("no peerConnection associated with id:", offer.id);
+        logger.debug("no peerConnection associated with id:", offer.id);
         return;
       } else {
         const sessionDescription = new RTCSessionDescription(offer.offer);
         const pc = peerConnections.get(offer.id);
-        console.log("setting remoteDescription with offer:", offer.id, pc);
+        logger.debug("setting remoteDescription with offer:", offer.id, pc);
         pc.setRemoteDescription(sessionDescription);
-        console.log("SDP", sessionDescription);
+        logger.debug("SDP", sessionDescription);
 
         // Create answer
         pc.createAnswer()
@@ -352,10 +353,10 @@ const WebCam = ({ users, currentUserData, socket }) => {
     });
 
     socket.on("answer", (answer) => {
-      console.log("Received answer:", answer);
+      logger.debug("Received answer:", answer);
 
       if (!peerConnections.has(answer.sender)) {
-        console.log(
+        logger.debug(
           "on answer failed to setRemoteDescription, no peerConnection for the associated id",
           answer.sender
         );
@@ -364,12 +365,12 @@ const WebCam = ({ users, currentUserData, socket }) => {
       const pc = peerConnections.get(answer.sender);
       pc.setRemoteDescription(new RTCSessionDescription(answer.answer));
       const senders = pc.getSenders();
-      console.log("SENDERS", senders);
+      logger.debug("SENDERS", senders);
       getNewStreams(pc);
     });
 
     socket.on("iceCandidate", async (iceCandidate) => {
-      console.log("ice candidate:", iceCandidate);
+      logger.debug("ice candidate:", iceCandidate);
       if (!peerConnections.has(iceCandidate.sender)) return;
       const pc = await peerConnections.get(iceCandidate.sender);
 
@@ -390,7 +391,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
   useEffect(() => {
     if (peerConnections.size > 0) {
       peerConnections.forEach((pc) => {
-        console.log("PC attributes:", pc);
+        logger.debug("PC attributes:", pc);
         getNewStreams(pc);
       });
     }
@@ -409,15 +410,15 @@ const WebCam = ({ users, currentUserData, socket }) => {
     remoteStreams.forEach((stream, index) => {
       if (stream) {
         const videoRef = remoteVideoRefs[index];
-        console.log("videoRef", videoRef);
+        logger.debug("videoRef", videoRef);
         if (videoRef && videoRef.current) {
-          console.log("single stream added to VidRemote Reference", stream);
+          logger.debug("single stream added to VidRemote Reference", stream);
           videoRef.current.srcObject = stream;
-          console.log(
+          logger.debug(
             "video Ref list  after adding remote stream",
             remoteVideoRefs
           );
-          console.log(
+          logger.debug(
             "video Streams list  after adding remote stream",
             remoteStreams
           );

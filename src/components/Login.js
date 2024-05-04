@@ -11,7 +11,7 @@ import {FormContainer,H1,
   TextArea,
   FileInput,
 GoogleLoginButton} from "../styles/FormStyles";
-
+import { logger } from "../utils/logger"
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +26,7 @@ const Login = () => {
         const response = await fetch(apiBaseUrl + '/auth/google',{method: 'GET'})
         const data = await response.json()
         const redirectUri = data.redirect
-        console.log("redirect url :",redirectUri)
+        logger.debug("redirect url :",redirectUri)
 window.location.href =  redirectUri
 
     }
@@ -37,7 +37,7 @@ window.location.href =  redirectUri
   };
   const navigate = useNavigate();
   const closePopup = () => {
-    console.log("closed with popUp type => ", popUpType);
+    logger.debug("closed with popUp type => ", popUpType);
     setPopupOpen(false);
     if (popUpType === "success") {
       navigate("/");
@@ -67,7 +67,7 @@ window.location.href =  redirectUri
       setPasswordError("The password must be 8 characters minimum");
       return;
     }
-    console.log(email, password);
+    logger.debug(email, password);
     let data = {
       email: email,
       password: password,
@@ -77,7 +77,7 @@ window.location.href =  redirectUri
       body: JSON.stringify(data),
       headers: { "Content-type": "application/json" },
     });
-    console.log(response);
+    logger.debug(response);
     if (response.status === 404 || response.status === 500) {
       popUpConfig(true, "failure", "invalid username/email or password");
     } else {
