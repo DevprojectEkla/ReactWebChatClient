@@ -1,4 +1,4 @@
-import { isDevelopment } from "config";
+import { isDevelopment } from "../config";
 
 export const logLevel = {
   debug: 0,

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import ArticleForm from "../components/ArticleForm";
 import PopUp from "../components/PopUp";
 import { usePopup } from "../utils";
-import { apiBaseUrl, MUTLIPART_BOUNDARY } from "config";
+import { apiBaseUrl, MUTLIPART_BOUNDARY } from "../config";
 import { useNavigate } from "react-router-dom";
 import { logger } from '../utils/logger'
 

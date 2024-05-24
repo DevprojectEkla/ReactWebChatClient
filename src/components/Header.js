@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { apiBaseUrl,isDevelopment } from "config";
-import { styled } from "styled-components";
+import { emphasize,styled } from '@mui/material/styles';
+import Chip from '@mui/material/Chip';
+
+import Breadcrumbs from "@mui/material/Breadcrumbs"
+import HomeIcon from '@mui/icons-material/Home';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import { THEME_COLOR,apiBaseUrl,isDevelopment } from "../config";
 import { useHeaderContext } from "../contexts/HeaderContext";
 import { useScrollToTopContext } from "../contexts/ScrollToTop";
 import { setSrcImg } from "../utils";
@@ -27,6 +33,25 @@ import {
   getCookie,
   getUserName,
 } from "../utils/cookieUtils";
+const StyledBreadcrumb = styled(Chip)(({ theme }) => {
+  const backgroundColor = THEME_COLOR
+  //   theme.palette.mode === 'light'
+  //     ? theme.palette.grey[100]
+  //     : theme.palette.grey[800];
+  return {
+    backgroundColor,
+    height: theme.spacing(3),
+    color: "white",
+    fontWeight: theme.typography.fontWeightRegular,
+    '&:hover, &:focus': {
+      backgroundColor: emphasize(backgroundColor, 0.06),
+    },
+    '&:active': {
+      boxShadow: theme.shadows[1],
+      backgroundColor: emphasize(backgroundColor, 0.12),
+    },
+  };
+})
 
 const Header = () => {
   const navigate = useNavigate();
@@ -40,7 +65,10 @@ const Header = () => {
   const { title: contextTitle } = useHeaderContext();
   const currentPageName = getPageNameFromLocation(location, contextTitle);
 
-
+function handleClick(event) {
+  event.preventDefault();
+  console.info('You clicked a breadcrumb.');
+}
   const handleItemClick = (itemName) => {
     alert(`Selected option: ${itemName}`);
   };
@@ -174,12 +202,23 @@ useEffect(() => {
               <Link to={"/articles/create"}> Créer un Article </Link>
             </CustomButton>
           </NavItem>
+<Breadcrumbs aria-label="breadcrumb">
+       <StyledBreadcrumb
+    component={Link}
+      to={"/"}
+    label="Accueil"
+      icon={<HomeIcon color="white" fontSize="small" />}/>
+      {currentPageName !== "Accueil" &&
+  <StyledBreadcrumb component="a" href="#" label={currentPageName} />}
+      {/* <StyledBreadcrumb
+    label="Accessories"
+    deleteIcon={<ExpandMoreIcon />}
+    onDelete={handleClick}
+      /> */}
+</Breadcrumbs>
+
           <NavItem>
-            <Link to={"/"}>
-              {" "}
-              <h3>{currentPageName}</h3>
-            </Link>
-          </NavItem>
+                      </NavItem>
         </Navbar>
         <Navbar>
           <NavItem>

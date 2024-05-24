@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { THEME_COLOR, SUCCESS_COLOR, FAILURE_COLOR } from 'config';
+import { THEME_COLOR, SUCCESS_COLOR, FAILURE_COLOR } from '../config';
 
 const baseColor = THEME_COLOR;
 

@@ -1,4 +1,4 @@
-import {DEFAULT_AVATAR_HASH_NAME} from "config"
+import {DEFAULT_AVATAR_HASH_NAME} from "../config"
 
 export const generateUniqueId = () => {const timestamp = Date.now()
 const randomNumber = generateRandomNumber(1000)

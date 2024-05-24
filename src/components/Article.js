@@ -4,7 +4,7 @@ import { useScrollToTopContext } from "../contexts/ScrollToTop";
 import DynamicImageComponent from "./DynamicImageComponent";
 import { Button } from "./Button";
 import { Link, useParams } from "react-router-dom";
-import { apiBaseUrl } from "config";
+import { apiBaseUrl } from "../config";
 const { loremIpsum } = require("lorem-ipsum");
 const Article = ({ article, index }) => {
   const [fetchedArticle, setFetchedArticle] = useState(null);

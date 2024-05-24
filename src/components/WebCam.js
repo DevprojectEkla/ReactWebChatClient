@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { logger } from "../utils/logger"
-import io from "socket.io-client";
-import { apiBaseUrl, MY_TURN_SERVER } from "config";
 import styled from "styled-components";
-import { getCookie } from "../utils/cookieUtils";
 
 const RemoteVideo = styled.video`
   width: 100%;
@@ -75,17 +72,18 @@ const WebCam = ({ users, currentUserData, socket }) => {
   };
   const initPeerConnection = async (userId) => {
     logger.debug("Initializing New Peer Connection for user:", userId);
-    const configuration = {
-      iceServers: [
-        {
-          urls: `${MY_TURN_SERVER}`,
-          // urls: "stun:stun.l.google.com:19302",
-          username: "ekla",
-          credential: "12345678",
-        },
-      ],
-    };
-    const pc = new RTCPeerConnection(configuration);
+    // const configuration = {
+    //   iceServers: [
+    //     {
+    //       urls: `${MY_TURN_SERVER}`,
+    //       // urls: "stun:stun.l.google.com:19302",
+    //       username: "ekla",
+    //       credential: "12345678",
+    //     },
+    //   ],
+    // };
+    // const pc = new RTCPeerConnection(configuration);
+    const pc = new RTCPeerConnection();
     peerConnection.current = pc;
 
     setPeerConnections(peerConnections.set(userId, pc));

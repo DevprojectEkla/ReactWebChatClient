@@ -1,5 +1,5 @@
 import {Helmet} from 'react-helmet-async';
-import { DESCRIPTION,TYPE,CONCEPTEUR, APP_TITLE,SUB_TITLE } from 'config';
+import { DESCRIPTION,TYPE,CONCEPTEUR, APP_TITLE,SUB_TITLE } from '../config';
 const SEO = () => {
     return (
 <Helmet>

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { THEME_COLOR } from 'config'
+import { THEME_COLOR } from '../config'
 import { logger } from "../utils/logger"
 const CustomButton = styled.button.attrs({type: 'button'})
 

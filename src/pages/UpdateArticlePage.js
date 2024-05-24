@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import ArticleForm from "../components/ArticleForm";
 import PopUp from "../components/PopUp";
-import { apiBaseUrl, MUTLIPART_BOUNDARY } from "config";
+import { apiBaseUrl, MUTLIPART_BOUNDARY } from "../config";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const UpdateArticlePage = () => {

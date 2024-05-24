@@ -1,4 +1,4 @@
-import { apiBaseUrl, THEME_COLOR } from "config"; //ATTENTION: cette import utilise un symlink client/node_modules/config.js poitant vers ../../config.rs ce qui correspond à la racine du projet le fichier config devant être partagé entre server/ et client/
+import { apiBaseUrl, THEME_COLOR } from "../config"; //ATTENTION: cette import utilise un symlink client/node_modules/config.js poitant vers ../../config.rs ce qui correspond à la racine du projet le fichier config devant être partagé entre server/ et client/
 import React, { useState, useEffect } from "react";
 import { logger } from "../utils/logger"
 import { Link } from "react-router-dom";

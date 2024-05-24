@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import {Button,clickCallBack} from './Button';
 import {useScrollToTopContext} from '../contexts/ScrollToTop'
 import { styled } from "styled-components"
-import { APP_TITLE,SUB_TITLE } from 'config';
+import { APP_TITLE,SUB_TITLE } from '../config';
 import SEO from './SEO'
 
 const StyledBodyContainer = styled.div `display: flex;

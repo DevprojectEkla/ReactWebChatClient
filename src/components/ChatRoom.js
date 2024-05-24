@@ -4,7 +4,7 @@ import WebCam from "./WebCam";
 import styled from "styled-components";
 import io from "socket.io-client";
 import { logger } from "../utils/logger"
-import { HOVER_EFFECT, THEME_COLOR, apiBaseUrl, isDevelopment } from "config";
+import { HOVER_EFFECT, THEME_COLOR, apiBaseUrl, isDevelopment } from "../config";
 import {
   getUserName,
   createCookie,

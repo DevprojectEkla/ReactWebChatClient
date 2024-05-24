@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "./Button";
-import { apiBaseUrl } from "config";
+import { apiBaseUrl } from "../config";
 import PopUp from "./PopUp";
 import {FormContainer,H1,
   InputLabelContainer,

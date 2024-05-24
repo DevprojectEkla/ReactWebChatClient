@@ -1,6 +1,6 @@
 
 import styled from 'styled-components';
-import { THEME_COLOR } from 'config';
+import { THEME_COLOR } from '../config';
 
 const baseColor = THEME_COLOR;
 
@@ -112,6 +112,10 @@ export const MenuItem = styled.div`
     background-color: ${baseColor};
   }
 `;
+
+
+
+  // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 
 // Additional styles as needed
 

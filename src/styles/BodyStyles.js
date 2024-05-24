@@ -1,5 +1,5 @@
 import styled, { createGlobalStyle } from "styled-components";
-import { ASSETS, BACKGROUND } from "config";
+import { ASSETS, BACKGROUND } from "../config";
 
 const StyledGlobal = createGlobalStyle`body {display: flex;
   flex-direction: column;

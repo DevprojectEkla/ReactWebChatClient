@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import SubscribeForm from '../components/SubscribeForm';
 import PopUp from '../components/PopUp'
-import{ apiBaseUrl,MUTLIPART_BOUNDARY } from 'config'
+import{ apiBaseUrl,MUTLIPART_BOUNDARY } from '../config'
 import {usePopup} from '../utils';
 import {useNavigate} from 'react-router-dom';
 
