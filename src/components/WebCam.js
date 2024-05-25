@@ -65,7 +65,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
 
       // Add each track to the peer connection
       tracks.forEach((track) => {
-        logger.debug("setting tracks for PC:", pc);
+        logger.debug(`setting tracks for PC:${JSON.stringify(pc)}`);
         pc.addTrack(track, localStream.current);
       });
     }
@@ -210,11 +210,11 @@ const WebCam = ({ users, currentUserData, socket }) => {
         )}`
       );
       if (peerConnections.has(data.socketId)) {
-        logger.debug("dropping :", data.socketId);
+        logger.debug(`dropping : ${data.socketId}`);
         const pcToDrop = peerConnections.get(id);
         pcToDrop.close();
         peerConnections.delete(id);
-        logger.debug("peerConnections after delete", peerConnections);
+          logger.debug(`peerConnections after delete: ${JSON.stringify(peerConnections)}`);
       }
       if (userStreamList.has(id)) {
         const streamToDrop = userStreamList.get(id);
@@ -253,18 +253,22 @@ const WebCam = ({ users, currentUserData, socket }) => {
     remoteStreams,
   ]);
   useEffect(() => {
-    getMediaDevices();
-    return () => {
-      if (peerConnections.size > 0) {
-        peerConnections.forEach((pc) => pc.close());
-      }
-      if (localStream.current) {
-        const tracks = localStream.current.getTracks();
-        tracks.forEach((track) => track.stop);
-      }
-    };
-  }, []);
-  useEffect(() => {
+  getMediaDevices();
+  return () => {
+    if (peerConnections.size > 0) {
+      peerConnections.forEach((pc) => pc.close());
+    }
+  };
+}, []);
+
+useEffect(() => {
+  return () => {
+    if (localStream.current) {
+      const tracks = localStream.current.getTracks();
+      tracks.forEach((track) => track.stop());
+    }
+  };
+}, []);  useEffect(() => {
     if (videoStream) {
       logger.debug("adding element to RemoteStreams array");
       setRemoteStreams((prevStreams) => [...prevStreams, videoStream]);
@@ -312,14 +316,14 @@ const WebCam = ({ users, currentUserData, socket }) => {
   // Handle signaling messages
   useEffect(() => {
     socket.on("offer", (offer) => {
-      logger.debug("Received offer:", offer);
+      logger.debug(`Received offer: ${offer}`);
       logger.debug("setting newOffer with the received offer:", offer);
       socketIdRef.current = offer.id;
       if (peerConnections.has(offer.id)) {
         logger.debug("got an offer from", offer.id);
       }
       if (!peerConnections.has(offer.id)) {
-        logger.debug("no peerConnection associated with id:", offer.id);
+        logger.debug(`no peerConnection associated with id: ${offer.id}`);
         return;
       } else {
         const sessionDescription = new RTCSessionDescription(offer.offer);

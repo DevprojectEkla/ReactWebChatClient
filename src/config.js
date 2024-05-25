@@ -11,7 +11,7 @@ const TYPE = "articles";
 const CONCEPTEUR = "Ekla Development";
 
 const ASSETS = "";
-const BACKGROUND = "/assets/landscape-0-page4.jpg";
+const BACKGROUND = "/assets/background.jpg";
 
 const THEME_COLOR = "rgba(70, 130, 180, 0.8)";
 const HOVER_BACKGROUND_COLOR = "rgb(230,80,255,.5)";
