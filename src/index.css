@@ -9,10 +9,10 @@ button {
   margin: 10px;
 }
 
-button :hover{
-    color: rgba(130, 250, 115, 1);
-    transition-duration: .5s;
-}
+/*button :hover{*/
+/*    color: rgba(130, 250, 115, 1);*/
+/*    transition-duration: .5s;*/
+/*}*/
 div {
   color: rgb(250, 250, 250);
 }

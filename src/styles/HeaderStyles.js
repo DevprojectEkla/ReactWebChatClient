@@ -32,6 +32,21 @@ export const NavItem = styled.div`
   align-items: center;
 `;
 
+export const CustomBackButton = styled.button`
+  background-color: ${baseColor};
+  color: #ecf0f1;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+  &:hover {
+    background-color: #3498db;
+    color: #fff;
+    border-color: #2980b9;
+  }
+`;
 export const CustomButton = styled.button`
   background-color: ${baseColor};
   color: #ecf0f1;

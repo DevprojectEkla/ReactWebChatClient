@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import {Button,clickCallBack} from './Button';
+import {MyButton,clickCallBack} from './Button';
 import {useScrollToTopContext} from '../contexts/ScrollToTop'
 import { styled } from "styled-components"
 import { APP_TITLE,SUB_TITLE } from '../config';
@@ -22,11 +22,11 @@ const Body = () => {
 
        
         <div >
-              <Button >< Link to="/articles">Consulter les articles</Link>
- </Button>
-                      <Button onClick={clickCallBack}>Rejoindre le Forum</Button>
-                      <Button>< Link to="/chatRoom">Rejoindre le chat</Link></Button>
-              <Button onClick={clickCallBack}> Contact</Button>
+              <MyButton >< Link to="/articles">Consulter les articles</Link>
+ </MyButton>
+                      <MyButton onClick={clickCallBack}>Rejoindre le Forum</MyButton>
+                      <MyButton>< Link to="/chatRoom">Rejoindre le chat</Link></MyButton>
+              <MyButton onClick={clickCallBack}> Contact</MyButton>
       
       </div>
         <div className='textContainer'>

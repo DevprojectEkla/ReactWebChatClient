@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom"
 import ArticlesList from "../components/ArticlesList"
-import {Button} from "../components/Button"
+import {MyButton} from "../components/Button"
 const ArticlesPage = () => {
 
     return (
@@ -8,7 +8,7 @@ const ArticlesPage = () => {
     <div>
     <ArticlesList/>
     </div>
-    <div><Button> <Link to="/">Retour</Link></Button></div>
+    <div><MyButton> <Link to="/">Retour</Link></MyButton></div>
     </div>
 
 )}

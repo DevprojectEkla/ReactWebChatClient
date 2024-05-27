@@ -12,7 +12,8 @@ import { useHeaderContext } from "../contexts/HeaderContext";
 import { useScrollToTopContext } from "../contexts/ScrollToTop";
 import { setSrcImg } from "../utils";
 import { logger } from "../utils/logger"
-import { Button } from "./Button";
+import   Button  from "@mui/material/Button";
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import {
     ProfileContainer,
     MenuItem,
@@ -26,6 +27,7 @@ import {
   Navbar,
   NavItem,
   NavLink,
+  CustomBackButton,
 } from "../styles/HeaderStyles";
 import {
   createCookie,
@@ -53,6 +55,11 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   };
 })
 
+const BackButton = ({handleBackClick}) => (
+    <Button variant="text" onClick={handleBackClick} fontSize="large" startIcon={<ArrowBackIosIcon style={{color : "white"}}/>}
+    >
+  </Button>
+);
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -194,14 +201,14 @@ useEffect(() => {
       <HeaderContainer>
         <Navbar>
           <NavItem>
-            <CustomButton onClick={handleBackButtonClick}>Retour</CustomButton>
-          </NavItem>
+      <BackButton handleBackClick={handleBackButtonClick}/>
+                </NavItem>
           <NavItem>
-
+      {userData?.admin? (
             <CustomButton>
               <Link to={"/articles/create"}> Créer un Article </Link>
-            </CustomButton>
-          </NavItem>
+          </CustomButton>):(null)
+}          </NavItem>
 <Breadcrumbs aria-label="breadcrumb">
        <StyledBreadcrumb
     component={Link}
@@ -226,7 +233,7 @@ useEffect(() => {
 
 {!userData || (userData?.username && userData.username.toLowerCase().startsWith('anonymous')) ? (
     <>
-    <MedallionContainer size={50}>
+    <MedallionContainer size={40}>
             <MedallionImage src={avatar} alt="Avatar Utilisateur" />
           </MedallionContainer>
         

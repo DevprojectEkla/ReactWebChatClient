@@ -41,7 +41,7 @@ export const log = (level, message, ...args) => {
         console.error(`[${level.toUpperCase()}] ${formattedMessage}`, ...args);
         break;
       default:
-        logger.debug(`[${level.toUpperCase()}] ${formattedMessage}`, ...args);
+        console.debug(`[${level.toUpperCase()}] ${formattedMessage}`, ...args);
     }
   }
 };

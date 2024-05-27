@@ -1,6 +1,8 @@
 import styled from 'styled-components'
 import { THEME_COLOR } from '../config'
 import { logger } from "../utils/logger"
+
+
 const CustomButton = styled.button.attrs({type: 'button'})
 
 `
@@ -15,18 +17,12 @@ const CustomButton = styled.button.attrs({type: 'button'})
     transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 
   &:hover {
-    background-color:rgba(70, 130, 180, 1) ; /* Fully opaque on hover */
+    background-color:rgba(70, 130, 180, 1) ; /* Fully opaque on hover */mport ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
   }
 `;
 
 const clickCallBack = async () =>{
     alert('button clicked')
-    let response = await fetch('/api/articles')
-    let data = await response.json();
-    
-
-logger.debug("Articles:",data)
-
 }
 
 const ConsulterArticles = () => {
@@ -36,11 +32,17 @@ const ConsulterArticles = () => {
     )
     
 }
-const Button = ({children,onClick}) => {
+
+
+
+
+
+const MyButton = ({children,onClick}) => {
     return (
         <CustomButton onClick = {onClick}>{children}</CustomButton>
     )
 }
 
 
-export  {Button, CustomButton, clickCallBack,}
+
+export  {MyButton, CustomButton,clickCallBack,}

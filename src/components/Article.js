@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useHeaderContext } from "../contexts/HeaderContext";
 import { useScrollToTopContext } from "../contexts/ScrollToTop";
 import DynamicImageComponent from "./DynamicImageComponent";
-import { Button } from "./Button";
+import { MyButton } from "./Button";
 import { Link, useParams } from "react-router-dom";
 import { apiBaseUrl } from "../config";
 const { loremIpsum } = require("lorem-ipsum");
@@ -62,11 +62,11 @@ const Article = ({ article, index }) => {
 
             <div dangerouslySetInnerHTML={{ __html: loremText }} />
           </div>
-          <Button>
+          <MyButton>
             <Link to={`/articles/update/${article._id}`} state={{ article }}>
               éditer l'article
             </Link>
-          </Button>
+          </MyButton>
         </>
       ) : (
         <h1>No Article available for index {index.id} </h1>

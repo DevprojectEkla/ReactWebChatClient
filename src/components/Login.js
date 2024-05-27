@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Button } from "./Button";
+import { MyButton } from "./Button";
 import { apiBaseUrl } from "../config";
 import PopUp from "./PopUp";
 import {FormContainer,H1,
@@ -114,9 +114,9 @@ window.location.href =  redirectUri
           </Label>
         </InputLabelContainer>
         <div>
-          <Button type="submit" onClick={onClick}>
+          <MyButton type="submit" onClick={onClick}>
             login
-          </Button>
+          </MyButton>
       <SubLink ><Link to={"/subscribe"}>Sign in</Link></SubLink>
         </div>
       </form>

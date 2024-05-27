@@ -14,7 +14,7 @@ import {
 
 import { useState } from "react";
 import { binaryStringToBytesArray, setSrcImg } from "../utils";
-import { Button } from "./Button";
+import { MyButton } from "./Button";
 import DynamicImageComponent from "./DynamicImageComponent";
 
 const SubscribeForm = ({ onSubmit }) => {
@@ -182,9 +182,9 @@ const SubscribeForm = ({ onSubmit }) => {
         </InputLabelContainer>
 
         <SubmitForm>
-          <Button onClick={handleSubmit} type="submit">
+          <MyButton onClick={handleSubmit} type="submit">
             Créer mon compte
-          </Button>
+          </MyButton>
         </SubmitForm>
       </form>
     </FormContainer>

@@ -14,7 +14,7 @@ import {
 import { useState, useEffect } from "react";
 import { binaryStringToBytesArray, setSrcImg } from "../utils"
 import { Link } from "react-router-dom";
-import { Button } from "./Button";
+import { MyButton } from "./Button";
 import { logger } from "../utils/logger";
 import DynamicImageComponent from "./DynamicImageComponent";
 
@@ -218,9 +218,9 @@ const convertedData = btoa(String.fromCharCode(...toUint8Array))
           )}
         </InputLabelContainer>
 
-        <Button onClick={handleSubmit} type="submit">
+        <MyButton onClick={handleSubmit} type="submit">
           {action}
-        </Button>
+        </MyButton>
       </form>
     </FormContainer>
   );
