@@ -55,7 +55,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
       .then((stream) => {
         localStream.current = stream;
         localVideoRef.current.srcObject = stream;
-        logger.debug(localStream);
+        logger.debug(JSON.stringify(localStream.current));
       })
       .catch((error) => {
         console.error("Error accessing media devices:", error);
@@ -283,7 +283,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
     },
     [peerConnections, remoteStreams, remoteVideoRefs, userStreamList]
   );
-  const handleOffer = useCallback( async (offer) => {
+  const handleOffer = useCallback( (offer) => {
       logger.debug(`Received offer: ${offer}`);
       logger.debug("setting newOffer with the received offer:", offer);
       socketIdRef.current = offer.id;
@@ -302,9 +302,9 @@ const WebCam = ({ users, currentUserData, socket }) => {
 
         // Create answer
         try {
-          await pc.createAnswer()
-            .then((answer) => {
-                pc.setLocalDescription(answer)})
+          pc.createAnswer()
+            .then((answer) => 
+                pc.setLocalDescription(answer))
             .then(() => {
               const customAnswer = {
                 sender: socket.id,
@@ -433,11 +433,11 @@ const WebCam = ({ users, currentUserData, socket }) => {
       socket.on("userJoined", async (data) => {
        await handleUserJoined(data);
       });
-      socket.on("offer", async (offer) => {
-        await handleOffer(offer);
+      socket.on("offer",  (offer) => {
+        handleOffer(offer);
       });
-      socket.on("answer", async (answer) => {
-       await handleAnswer(answer);
+      socket.on("answer",  (answer) => {
+       handleAnswer(answer);
       });
       socket.on("iceCandidate", async (iceCandidate) => {
        await handleIceCandidate(iceCandidate);
