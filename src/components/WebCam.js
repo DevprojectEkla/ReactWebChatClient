@@ -1,40 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { logger } from "../utils/logger";
-import styled from "styled-components";
 import { apiBaseUrl } from "../config";
-import MY_TURN_SERVER from "../config";
+import { RemoteVideoContainer,RemoteVideo,LocalVideo } from "../styles/WebCamStyles";
 
-const RemoteVideo = styled.video`
-  width: 100%;
-  max-width: 400px; /* Adjust the maximum width as needed */
-  max-height: 300px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  transition: border-color 0.3s ease; /* Smooth transition for border color */
-
-  /* Cool effects on hover */
-  &:hover {
-    border-color: #ff6b6b; /* Change border color on hover */
-    box-shadow: 0 0 10px rgba(255, 107, 107, 0.5); /* Add shadow effect on hover */
-  }
-`;
-const RemoteVideoContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-const LocalVideo = styled.video`
-  width: 100%;
-  max-width: 200px; /* Adjust the maximum width as needed */
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  transition: border-color 0.3s ease; /* Smooth transition for border color */
-
-  /* Cool effects on hover */
-  &:hover {
-    border-color: #ff6b6b; /* Change border color on hover */
-    box-shadow: 0 0 10px rgba(255, 107, 107, 0.5); /* Add shadow effect on hover */
-  }
-`;
 const WebCam = ({ users, currentUserData, socket }) => {
   const localStream = useRef(null);
   const [peerConnections, setPeerConnections] = useState(new Map());
@@ -90,18 +58,17 @@ const WebCam = ({ users, currentUserData, socket }) => {
       if (pc) {
         pc.ontrack = (event) => {
           const stream = event.streams[0];
-          logger.debug("Streams", event.streams);
+            logger.debug(`Streams ${JSON.stringify(event.streams)}`);
           // logger.debug("Tracks",event.streams[0].getTracks())
           setVideoStream(stream);
           if (event.streams[0]) {
-            logger.debug("Stream List on user joined", userStreamList);
             if (!userStreamList.has(socketIdRef.current)) {
               setUserStreamList((prevMap) =>
                 prevMap.set(socketIdRef.current, stream)
               );
             }
 
-            logger.debug("stream:", stream);
+            logger.debug(`stream: ${JSON.stringify(userStreamList)}`);
           }
         };
       }
@@ -119,6 +86,10 @@ const WebCam = ({ users, currentUserData, socket }) => {
       if (turnConfig) {
         const configuration = {
           iceServers: [
+              {urls: turnConfig.urls.stun,
+                  credential: turnConfig.credential,
+
+              },
             {
               urls: turnConfig.urls.turn,
               username: turnConfig.username,
@@ -445,8 +416,8 @@ const WebCam = ({ users, currentUserData, socket }) => {
     };
     initializeSocket();
     return () => {
-        socket.off("userLeft");
-        socket.off("userJoined")
+        //socket.off("userLeft"); call socket.off for this will make the behavior of the ChatRoom unstable, e. g usersList not always visible...
+        //socket.off("userJoined")
       socket.off("offer");
       socket.off("answer");
       socket.off("iceCandidate");

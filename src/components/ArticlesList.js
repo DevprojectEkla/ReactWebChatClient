@@ -51,8 +51,13 @@ useEffect(() => {
             'Cookie':`session_data=${sessionData}`,
         }});
       if (!response.ok) {
+          if (response.status === 401){
+
+        throw new Error(`Failed to fetch articles. You Need to Be Logged in to Access this resource. Status Code: ${response.status}`);
+          }
+          else{
         throw new Error(`Failed to fetch articles. Status: ${response.status}`);
-      }
+      }}
       let data = await response.json();
 
       setArticles(data);
@@ -110,7 +115,7 @@ useEffect(() => {
         <h1>Articles</h1>
       </div>
       {error ? (
-        <p>Cannot Display articles. Error: {error}</p>
+        <p> Error: {error}</p>
       ) : (
         <div>
           {articles && articles.length > 0 ? (
