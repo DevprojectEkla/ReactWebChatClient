@@ -1,4 +1,4 @@
-import { isDevelopment } from "../config";
+import { apiBaseUrl } from "../config";
 
 export const logLevel = {
   debug: 0,
@@ -6,7 +6,8 @@ export const logLevel = {
   warn: 2,
   error: 3,
 };
-export const currentLogLevel = isDevelopment ? logLevel.debug : logLevel.info;
+
+export const currentLogLevel = fetch(apiBaseUrl + '/api/debug') === 'True' ? logLevel.debug : logLevel.info;
 
 export const logger = {
   debug: (message) => log("debug", message),

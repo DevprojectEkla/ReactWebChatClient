@@ -66,7 +66,7 @@ const SubscribeForm = ({ onSubmit }) => {
     setUserName(e.target.value);
 
     if (e.target.value.length > 100) {
-      setUserNameError("pseudo must not exceed 100 characters");
+      setUserNameError("Pseudo must not exceed 100 characters");
     } else {
       setUserNameError("");
     }
@@ -96,7 +96,7 @@ const SubscribeForm = ({ onSubmit }) => {
     setPassword(e.target.value);
 
     if (e.target.value.length > 50) {
-      setPasswordError("Author name must not exceed 50 characters");
+      setPasswordError("Password must not exceed 50 characters");
     } else {
       setPasswordError("");
     }

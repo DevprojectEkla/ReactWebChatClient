@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import {MUTLIPART_BOUNDARY} from './config';
 export const setSrcImg = (dataFile, type) => {
     // console.log(`setting src attribute with data: ${dataFile} and type ${type}`)
     const binaryBuffer = new Uint8Array(dataFile);
@@ -16,8 +17,17 @@ export  const binaryStringToBytesArray = (binaryString) => {
     return bytesArray;
   };
 
+export const headers = {multipart: {"Content-type":`multipart/form-data; boundary="${MUTLIPART_BOUNDARY}"`},
+    json: {"Content-type": "application/json"}
 
- 
+}
+export const setRequest = (method, data,headers) => {
+    return {
+        method: method,
+        body: data,
+        headers: headers 
+    }
+}
 export const usePopup = () => {
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [popUpType, setPopUpType] = useState('success');

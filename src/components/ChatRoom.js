@@ -8,7 +8,7 @@ import {
   getUserName,
   getCookie,
 } from "../utils/cookieUtils";
-import { ChatRoomContainer,WebCamContainer,CenteredContainer, LeftContainer, ChatInput, ChatHeader, ChatMessages, ChatContainer, Message, SenderName,SendButton, EmojiButton } from "../styles/ChatRoomStyles";
+import { ChatRoomContainer,WebCamContainer, RightContainer, BottomContainer, LeftContainer, ChatInput, ChatHeader, ChatMessages, ChatContainer, Message, SenderName,SendButton, EmojiButton, TextMessage } from "../styles/ChatRoomStyles";
 
 const ChatRoom = () => {
   const [messages, setMessages] = useState([]);
@@ -145,7 +145,10 @@ const ChatRoom = () => {
   }, [messages]);
   return (
     <ChatRoomContainer>
-      <WebCamContainer>
+      <BottomContainer>
+                <UserList users={users} />
+      </BottomContainer>
+<WebCamContainer>
         {socket ? (
           <WebCam
             socket={socket}
@@ -158,13 +161,9 @@ const ChatRoom = () => {
         )}
       </WebCamContainer>
 
-      <CenteredContainer ref={chatContainerRef}>
-        <LeftContainer>
-          {socket ? <UserList users={users} /> : <></>}
-        </LeftContainer>
-        <ChatContainer>
-          <ChatHeader>Chat Room</ChatHeader>
-          <ChatMessages ref={chatContainerRef}>
+          <ChatContainer ref={chatContainerRef}>
+            <ChatHeader>Chat Room</ChatHeader>
+            <ChatMessages ref={chatContainerRef}>
             {messages.map((message, index) => (
               <Message
                 ref={chatContainerRef}
@@ -172,26 +171,29 @@ const ChatRoom = () => {
                 $issender={(message.sender === socket.id).toString()}
               >
                 <SenderName>{message.text.sender}:</SenderName>
+                <TextMessage>
                 {message.text.text}
+                </TextMessage>
               </Message>
             ))}
-          </ChatMessages>
-          <ChatInput
-            type="text"
-            placeholder="Type your message..."
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-          />
-
-          <audio id="messageSound" src="/assets/message_sent.mp3"></audio>
-
-          <SendButton onClick={handleSendMessage}></SendButton>
-          <EmojiButton onClick={handleEmojiClick}>😊</EmojiButton>
-        </ChatContainer>
-      </CenteredContainer>
+          </ChatMessages>            <div>
+              <ChatInput
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    handleSendMessage();
+                  }
+                }}
+                placeholder="Type a message"
+              />
+              <SendButton onClick={handleSendMessage} />
+              <EmojiButton onClick={handleEmojiClick} />
+            </div>
+          </ChatContainer>
+      <audio id="messageSound" src="/assets/message_sent.mp3"> </audio>
     </ChatRoomContainer>
-  );
-};
+  );};
 
 export default ChatRoom;

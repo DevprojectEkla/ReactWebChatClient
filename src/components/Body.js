@@ -26,7 +26,7 @@ const Body = () => {
  </MyButton>
                       <MyButton onClick={clickCallBack}>Rejoindre le Forum</MyButton>
                       <MyButton>< Link to="/chatRoom">Rejoindre le chat</Link></MyButton>
-              <MyButton onClick={clickCallBack}> Contact</MyButton>
+        <MyButton> <Link to="/Contact"> Contact</Link></MyButton>
       
       </div>
         <div className='textContainer'>

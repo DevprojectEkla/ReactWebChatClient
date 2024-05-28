@@ -15,6 +15,7 @@ import CreateArticlePage from './pages/CreateArticlePage';
 import CreateAccountPage from './pages/CreateAccountPage';
 import UpdateArticlePage from './pages/UpdateArticlePage'
 import StyledGlobal from './styles/BodyStyles';
+import ContactPage from './pages/ContactPage';
 
 const StyledApp = styled.div`
     display:flex;
@@ -31,12 +32,9 @@ function App() {
       <HelmetProvider>
 <BrowserRouter basename='/'>
       <HeaderProvider>
-    <div className="App">
     <StyledGlobal/> 
     
-      <div>
       <Header/>
-      </div>
       <Routes>
       <Route  path={"/"} exact element={<Body/>}></Route>
       <Route path={"login"} element={<Login/>}></Route>
@@ -47,11 +45,9 @@ function App() {
       <Route path={"articles"} element={<ArticlesPage/>}></Route>
       <Route path={"articles/detail/:id"} element={<SingleArticlePage/>}></Route>
       <Route path={"chatRoom/"} element={<ChatRoom/>}></Route>
+      <Route path={"Contact/"} element={<ContactPage/>}></Route>
       </Routes>
-      <div>
       <Footer/>
-      </div>
-                                    </div>
       </HeaderProvider>
           </BrowserRouter>
       </HelmetProvider>
