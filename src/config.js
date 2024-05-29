@@ -14,10 +14,10 @@ const ASSETS = "";
 const BACKGROUND = "/assets/background.jpg";
 
 const THEME_COLOR = "rgba(70, 130, 180, 0.8)";
-const HOVER_BACKGROUND_COLOR = "rgb(230,80,255,.5)";
-const HOVER_EFFECT = `&:hover {
-    background-color: ${HOVER_BACKGROUND_COLOR};
-transition: background-color 0.3s ease,color 0.3s ease,border-color 0.3s ease;`
+const HOVER_BACKGROUND_COLOR = "rgb(255,250,255,.7)";
+const HOVER_EFFECT = (end_color,text_color="inherit") => {return `&:hover {color:${text_color};
+    background-color: ${end_color};
+transition: background-color 0.3s ease,color 0.3s ease,border-color 0.3s ease;`}
 
 const FAILURE_COLOR='#e74c3c'
 const SUCCESS_COLOR = "rgba(192, 130,140,0.8)";

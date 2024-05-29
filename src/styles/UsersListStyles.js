@@ -1,11 +1,12 @@
 import styled from 'styled-components';
+import {HOVER_EFFECT} from '../config';
 
 export const UserListItemContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-
+    
   @media (min-width: 768px) {
     flex-direction: row;
     justify-content: space-around;
@@ -16,7 +17,7 @@ export const UserListContainer = styled.div`
   width: auto 
   max-height: 300px; /* Limit the maximum height to prevent it from taking up too much space */
   overflow-y: auto;
-  background-color: rgba(0, 0, 255, 0.2);
+  background-color: rgba(0, 0,55, 0.7);
   border-radius: 8px;
   padding: 10px;
   margin-top: 10px;
@@ -24,16 +25,16 @@ export const UserListContainer = styled.div`
 `;
 
 export const UserListItem = styled.div`
-  color: #000;
-  padding: 5px;
-  margin-right: 5px;
-  background-color: rgba(255, 255, 255, 0.8);
+color: rgb(230,230,255);
+  padding: 4px;
+  margin: 2px;
+  ${HOVER_EFFECT("rgba(220,220, 235, 1)","rgba(0,0,30,.8)")};
   border-radius: 4px;
 `;
 
-export const H2 = styled.h2`
+export const H2 = styled.h3`
   text-align: center;
-padding:10px;
+margin-top:1px;
   margin-bottom: 10px;
 `;
 

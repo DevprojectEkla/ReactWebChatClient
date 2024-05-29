@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Button from "@mui/material/Button";
 import { HOVER_EFFECT, THEME_COLOR } from "../config";
 
 export const ChatRoomContainer = styled.div`
@@ -12,10 +13,14 @@ export const ChatRoomContainer = styled.div`
 
 export const WebCamContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   width: 100%;
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-around;
+  }
 `;
 
 export const BottomContainer = styled.div`
@@ -50,13 +55,13 @@ export const ChatContainer = styled.div`
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow-y: auto;
-  background-color: rgba(0, 0, 255, 0.2);
+  background-color: rgba(0, 122, 255, 0.2);
   transition: background-color 0.3s ease;
   margin: 10px;
   flex-shrink: 0;
 
   &:hover {
-    background-color: rgba(70, 80, 250, 0.5);
+    background-color: rgba(0, 0, 35, 0.8);
   }
 
   @media (min-width: 768px) {
@@ -84,8 +89,8 @@ export const TextMessage = styled.span`
   margin-top: 5px; /* Adjust margin as needed */
 `;
 export const Message = styled.div`
-display: flex;
-flex-direction: column;
+  display: flex;
+  flex-direction: column;
   color: white;
   margin-bottom: 8px;
   padding: 8px;
@@ -99,9 +104,8 @@ flex-direction: column;
       ? `
       
     align-self: flex-end;
-
-    background-color: rgba(230, 80, 15, 0.2);
-    color: white;
+      color:rgba(230, 240, 255, 1);
+    background-color: rgba(230, 240, 255, 0.2);
     margin-left: auto;
       padding:auto ;
     font-size:auto ;
@@ -109,8 +113,8 @@ flex-direction: column;
   `
       : `
     align-self: flex-start;
-    background-color: #d3ffd3;
-    color: green;
+    background-color: rgba(210,220,250,.7);
+    color: rgba(0,0,55,.9);
     margin-right: auto; /* Pushes the receiver's message to the left */
     padding: 10px; /* Default padding for receiver's message */
     font-size: 16px; /* Default font size for receiver's message */
@@ -119,28 +123,34 @@ flex-direction: column;
 
   &:hover {
     background-color: rgba(
+      210,
       230,
-      80,
-      15,
+      255,
       0.5
     ); /* Adjust hover color for sender's message */
   }
 `;
 export const SenderName = styled.span`
-  color: black;
+  color: rgb(0,15,40);
   font-weight: bold;
   margin-right: 8px;
+
 `;
 
 export const ChatInput = styled.input`
-  width: calc(100% - 20px);
+  background-color: rgba(0, 0, 50, 0.6);
+color:white;
+  width: auto;
   padding: 10px;
   border: none;
   border-top: 1px solid #ccc;
-  ${HOVER_EFFECT};
+  ${HOVER_EFFECT("rgba(255,255,250,.7)","black")};
+::placeholder {
+    color:white;
+}
 `;
 
-export const SendButton = styled.button`
+export const SendButton = styled.div`
   background: url(/assets/send.png) no-repeat center center;
   background-size: 50%;
   border: 2px solid #95a5a6;
@@ -154,7 +164,7 @@ export const SendButton = styled.button`
   ${HOVER_EFFECT};
 `;
 
-export const EmojiButton = styled.button`
+export const EmojiButton = styled(Button)`
   border-radius: 4px;
   border: 2px solid #95a5a6;
   height: 40px;

@@ -1,14 +1,32 @@
 import React, { useState, useEffect, useRef } from "react";
+import InsertEmoticonOutlinedIcon from "@mui/icons-material/InsertEmoticonOutlined";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import SendIcon from "@mui/icons-material/Send";
+
 import UserList from "./UserList";
 import WebCam from "./WebCam";
 import io from "socket.io-client";
-import { logger } from "../utils/logger"
-import {  apiBaseUrl, isDevelopment } from "../config";
+import { logger } from "../utils/logger";
+import { apiBaseUrl, isDevelopment } from "../config";
+import { getUserName, getCookie } from "../utils/cookieUtils";
 import {
-  getUserName,
-  getCookie,
-} from "../utils/cookieUtils";
-import { ChatRoomContainer,WebCamContainer, RightContainer, BottomContainer, LeftContainer, ChatInput, ChatHeader, ChatMessages, ChatContainer, Message, SenderName,SendButton, EmojiButton, TextMessage } from "../styles/ChatRoomStyles";
+  ChatRoomContainer,
+  WebCamContainer,
+  RightContainer,
+  BottomContainer,
+  LeftContainer,
+  ChatInput,
+  ChatHeader,
+  ChatMessages,
+  ChatContainer,
+  Message,
+  SenderName,
+  SendButton,
+  EmojiButton,
+  TextMessage,
+} from "../styles/ChatRoomStyles";
 
 const ChatRoom = () => {
   const [messages, setMessages] = useState([]);
@@ -146,9 +164,9 @@ const ChatRoom = () => {
   return (
     <ChatRoomContainer>
       <BottomContainer>
-                <UserList users={users} />
+        <UserList users={users} />
       </BottomContainer>
-<WebCamContainer>
+      <WebCamContainer>
         {socket ? (
           <WebCam
             socket={socket}
@@ -161,39 +179,58 @@ const ChatRoom = () => {
         )}
       </WebCamContainer>
 
-          <ChatContainer ref={chatContainerRef}>
-            <ChatHeader>Chat Room</ChatHeader>
-            <ChatMessages ref={chatContainerRef}>
-            {messages.map((message, index) => (
-              <Message
-                ref={chatContainerRef}
-                key={index}
-                $issender={(message.sender === socket.id).toString()}
-              >
-                <SenderName>{message.text.sender}:</SenderName>
-                <TextMessage>
-                {message.text.text}
-                </TextMessage>
-              </Message>
-            ))}
-          </ChatMessages>            <div>
-              <ChatInput
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    handleSendMessage();
-                  }
-                }}
-                placeholder="Type a message"
-              />
-              <SendButton onClick={handleSendMessage} />
-              <EmojiButton onClick={handleEmojiClick} />
-            </div>
-          </ChatContainer>
-      <audio id="messageSound" src="/assets/message_sent.mp3"> </audio>
+      <ChatContainer ref={chatContainerRef}>
+        <ChatHeader>Chat Room</ChatHeader>
+        <ChatMessages ref={chatContainerRef}>
+          {messages.map((message, index) => (
+            <Message
+              ref={chatContainerRef}
+              key={index}
+              $issender={(message.sender === socket.id).toString()}
+            >
+              <SenderName>{message.text.sender}:</SenderName>
+              <TextMessage>{message.text.text}</TextMessage>
+            </Message>
+          ))}
+        </ChatMessages>
+
+        <Stack direction="row" spacing={2}>
+          <ChatInput
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                handleSendMessage();
+              }
+            }}
+            placeholder="Type a message"
+          />
+          <IconButton
+            aria-label="Send"
+            size="large"
+            variant="contained"
+            onClick={handleSendMessage}
+          >
+            
+            <SendIcon fontSize="large" style={{color: "white"}} />
+          </IconButton>
+          <IconButton
+            variant="contained"
+            size="large"
+            onClick={handleEmojiClick}
+      style={{color: "white"}}
+          >
+            
+            <InsertEmoticonOutlinedIcon fontSize="large" />
+          </IconButton>
+        </Stack>
+      </ChatContainer>
+      <audio id="messageSound" src="/assets/message_sent.mp3">
+       
+      </audio>
     </ChatRoomContainer>
-  );};
+  );
+};
 
 export default ChatRoom;
