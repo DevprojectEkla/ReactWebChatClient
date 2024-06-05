@@ -9,7 +9,7 @@ import UserList from "./UserList";
 import WebCam from "./WebCam";
 import io from "socket.io-client";
 import { logger } from "../utils/logger";
-import { apiBaseUrl, isDevelopment } from "../config";
+import { HOVER_EFFECT, apiBaseUrl, isDevelopment } from "../config";
 import { getUserName, getCookie } from "../utils/cookieUtils";
 import {
   ChatRoomContainer,
@@ -27,7 +27,7 @@ import {
   EmojiButton,
   TextMessage,
 } from "../styles/ChatRoomStyles";
-
+const colors = require("../styles/colors")
 const ChatRoom = () => {
   const [messages, setMessages] = useState([]);
   const [userSenderId, setUserSenderId] = useState("");
@@ -211,15 +211,17 @@ const ChatRoom = () => {
             size="large"
             variant="contained"
             onClick={handleSendMessage}
+      sx={{color: "white", "&:hover": {color: colors.GBLUE_5} }}
           >
             
-            <SendIcon fontSize="large" style={{color: "white"}} />
+            <SendIcon fontSize="large"  />
           </IconButton>
           <IconButton
             variant="contained"
             size="large"
             onClick={handleEmojiClick}
-      style={{color: "white"}}
+
+      sx={{color: "white", "&:hover": {color: colors.GBLUE_5} }}
           >
             
             <InsertEmoticonOutlinedIcon fontSize="large" />

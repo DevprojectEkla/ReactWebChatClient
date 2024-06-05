@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import Button from "@mui/material/Button";
 import { HOVER_EFFECT, THEME_COLOR } from "../config";
+import { make_rgba } from "./colors" 
+const colors = require("./colors");
 
 export const ChatRoomContainer = styled.div`
   display: flex;
@@ -52,16 +54,18 @@ export const RightContainer = styled.div`
 
 export const ChatContainer = styled.div`
   width: 90%;
-  border: 1px solid #ccc;
+  border: 1px solid ${colors.GBLUE_2_1};
   border-radius: 8px;
   overflow-y: auto;
-  background-color: rgba(0, 122, 255, 0.2);
+  background-color: ${make_rgba(colors.GBLUE_1_2,".6")};
   transition: background-color 0.3s ease;
   margin: 10px;
   flex-shrink: 0;
 
   &:hover {
-    background-color: rgba(0, 0, 35, 0.8);
+      color:${colors.GBLUE_4};
+      border: 2px solid ${make_rgba(colors.GBLUE_1_3,".8")};
+    background-color:  ${make_rgba(colors.GBLUE_0,".8")} ;
   }
 
   @media (min-width: 768px) {
@@ -70,7 +74,7 @@ export const ChatContainer = styled.div`
 `;
 
 export const ChatHeader = styled.h2`
-  color: #fff;
+  color: inherit;
   padding: 5px;
   text-align: center;
 `;
@@ -138,13 +142,13 @@ export const SenderName = styled.span`
 `;
 
 export const ChatInput = styled.input`
-  background-color: rgba(0, 0, 50, 0.6);
+  background-color: ${make_rgba( colors.GBLUE_2,".4")};
 color:white;
   width: auto;
   padding: 10px;
   border: none;
   border-top: 1px solid #ccc;
-  ${HOVER_EFFECT("rgba(255,255,250,.7)","black")};
+  ${HOVER_EFFECT("rgba(255,255,250,.9)","black")};
 ::placeholder {
     color:white;
 }

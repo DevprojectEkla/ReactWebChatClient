@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import {HOVER_EFFECT} from '../config';
+import { make_rgba } from "../styles/colors" 
+const colors = require("../styles/colors");
 
 export const UserListItemContainer = styled.div`
   display: flex;
@@ -17,11 +19,12 @@ export const UserListContainer = styled.div`
   width: auto 
   max-height: 300px; /* Limit the maximum height to prevent it from taking up too much space */
   overflow-y: auto;
-  background-color: rgba(0, 0,55, 0.7);
+  background-color: ${make_rgba(colors.GBLUE_2_1,".7")};
   border-radius: 8px;
   padding: 10px;
   margin-top: 10px;
   margin-bottom: 10px;
+${HOVER_EFFECT(colors.GBLUE_4)}
 `;
 
 export const UserListItem = styled.div`
