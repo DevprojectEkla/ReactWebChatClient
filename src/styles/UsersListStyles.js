@@ -5,6 +5,7 @@ const colors = require("../styles/colors");
 
 export const UserListItemContainer = styled.div`
   display: flex;
+flex-direction: row;
   align-items: center;
   justify-content: center;
   width: 100%;

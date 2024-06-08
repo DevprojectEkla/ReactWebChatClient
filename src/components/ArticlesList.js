@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { logger } from "../utils/logger"
 import { Link } from "react-router-dom";
 import { CustomButton } from "./Button";
+import { ListArticleContainer } from "../styles/ArticlesStyles"
 import DynamicImageComponent from "./DynamicImageComponent";
 import { useScrollToTopContext } from "../contexts/ScrollToTop";
 import Spinner from "./Spinner";
@@ -110,7 +111,7 @@ useEffect(() => {
   //on utilise .bind, l'argument null
   //onClick={getArticleBody.bind(null, article)}
   return (
-    <div className="listArticleContainer">
+    <ListArticleContainer>
       <div>
         <h1>Articles</h1>
       </div>
@@ -127,7 +128,7 @@ useEffect(() => {
           )}
         </div>
       )}
-    </div>
+    </ListArticleContainer>
   );
 };
 

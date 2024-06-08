@@ -1,22 +1,35 @@
 import styled from "styled-components";
-import {THEME_COLOR} from "../config";
+import { THEME_COLOR } from "../config";
 
 export const FooterContainer = styled.footer`
-background-color:${THEME_COLOR};
-width: 100%;
-color: #fff;
-padding: 20px ;
-bottom: 0;
-left:0;
-margin-top:20%;
+  background-color: ${THEME_COLOR};
+  width: 100%;
+  max-width: 100vw;
+  color: #fff;
+  padding: 20px;
+  bottom: 0;
+  left: 0;
+  margin-top: 5%;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    max-width: 100%;
+      margin-top: 10%;
+  }
 `;
 
 export const FooterContent = styled.div`
   display: flex;
+  flex-direction: row;
   justify-content: space-around;
   text-align: justify;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%; 
+  max-width: 100vw; 
+  margin: 0 ;
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+  }
 `;
 
 export const FooterSection = styled.div`

@@ -5,6 +5,7 @@ const spinAnimation = keyframes`0%{ transform: rotate(0deg); }
 `;
 export const StyledSpinnerContainer = styled.div`
   display: flex;
+flex-direction: row;
   align-items: center;
   justify-content: center;
   height: 100vh;

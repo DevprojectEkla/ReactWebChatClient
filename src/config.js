@@ -5,6 +5,7 @@ const isDevelopment = process.env.NODE_ENV === "development";
 const apiBaseUrl = isDevelopment ? "https://localhost:8000" : "";
 const APP_TITLE = "Isaïæ Vox";
 const SUB_TITLE = "La plateforme de ta vocation";
+const WIDTH = "width=device-width, initial-scale=1.0"
 const DESCRIPTION =
   "Tu as entendu l'appel du Seigneur et cherches à répondre à cet appel mais sans savoir par où commencer ? Cette app' est faite pour toi !";
 const TYPE = "articles";
@@ -26,6 +27,7 @@ const MUTLIPART_BOUNDARY =
 const DEFAULT_AVATAR_HASH_NAME = '2f6ef1ab218b73b662d2ef359aba36ce8ca9086a6aca2f5e7748a8d0fed58aca'
 
 module.exports = {
+    WIDTH,
     DEFAULT_AVATAR_HASH_NAME,
     HOVER_EFFECT,
   ASSETS,

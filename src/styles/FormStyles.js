@@ -17,6 +17,11 @@ export const FormContainer = styled.div`
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     background-color: #2c3e50; 
   }
+@media (max-width: 768px){
+    width:60vw;
+    margin-top: 20%;
+    margin-bottom:10%;
+}
 `;
 export const SubLink = styled.a`
 text-decoration: none;
@@ -28,16 +33,26 @@ export const H1 = styled.h1`
 
 export const InputLabelContainer = styled.div`
   margin-bottom: 15px;
+@media (max-width: 768px){
+    width:60vw;
+    margin:2%;
+}
+
 `;
 
 export const Label = styled.label`
   color: #ecf0f1;
   display: block;
   margin-bottom: 5px;
+@media (max-width: 768px){
+    width:60vw;
+    margin:auto;
+}
 `;
 
 export const Input = styled.input`
   width: calc(100% - 22px);
+max-width: 90%;
   padding: 10px;
   border: 1px solid #95a5a6; /* Light gray border color */
   border-radius: 6px;
@@ -51,10 +66,16 @@ export const Input = styled.input`
     border-color: #ecf0f1;
     background-color: #2980b9; /* Darker blue on focus */
   }
+@media (max-width: 768px){
+    width:60vw;
+    margin:auto;
+    
+}
 `;
 
 export const TextArea = styled.textarea`
   width: calc(100% - 22px);
+max-width: 90%;
   padding: 10px;
   border: 1px solid #95a5a6;
   border-radius: 6px;
@@ -111,9 +132,15 @@ export const BrowseButton = styled.div`
 `;
 export const GoogleLoginButton = styled(BrowseButton)`
 background-color: rgba(0,0,0,0);
+max-width: 90%;
 margin-bottom: 10px;
 background-image: url('/assets/Googlelogo.svg');
   background-size: 20px; 
 background-repeat: no-repeat;
-background-position: 17% center ; 
-padding-left: 40px;` 
+background-position: 17% center; 
+padding-left: 5em; 
+@media (max-width: 768px){
+max-width: 90%;
+    min-width:70%;
+padding-left: 15%; 
+}`

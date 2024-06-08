@@ -1,6 +1,5 @@
-
-import styled from 'styled-components';
-import { THEME_COLOR } from '../config';
+import styled from "styled-components";
+import { THEME_COLOR } from "../config";
 
 const baseColor = THEME_COLOR;
 
@@ -15,20 +14,27 @@ export const StyledHeader = styled.header`
 
 export const HeaderContainer = styled.div`
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
   margin: 0 auto;
+@media (max-width: 768px){
+    display:flex;
+    flex-direction:column;
+    flex:1;
+}
 `;
 
 export const Navbar = styled.nav`
   display: flex;
+  flex-direction: row;
   align-items: center;
 `;
 
 export const NavItem = styled.div`
   margin-right: 10px;
   display: flex;
+  flex-direction: row;
   align-items: center;
 `;
 
@@ -39,7 +45,8 @@ export const CustomBackButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
 
   &:hover {
     background-color: #3498db;
@@ -55,7 +62,8 @@ export const CustomButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
 
   &:hover {
     background-color: #3498db;
@@ -64,15 +72,18 @@ export const CustomButton = styled.button`
   }
 `;
 
-
 export const MedallionContainer = styled.div`
-  width: ${props => `${props.size}px`};
-  height: ${props => `${props.size}px`};
+  display: flex;
+  flex-direction: row;
+  width: ${(props) => `${props.size}px`};
+  height: ${(props) => `${props.size}px`};
   border-radius: 50%;
   overflow: hidden;
-  display: flex;
   justify-content: center;
   align-items: center;
+@media (max-width: 768px) {
+    flex-direction:column;
+}
 `;
 
 export const MedallionImage = styled.img`
@@ -89,7 +100,7 @@ export const ArrowIcon = styled.div`
   border-bottom: 5px solid aliceblue;
 
   cursor: pointer;
-opacity: 0.2;
+  opacity: 0.2;
   transition: opacity 0.3s ease-in-out;
 
   &:hover {
@@ -128,9 +139,6 @@ export const MenuItem = styled.div`
   }
 `;
 
-
-
-  // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
+// TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 
 // Additional styles as needed
-

@@ -1,11 +1,12 @@
 import {Helmet} from 'react-helmet-async';
-import { DESCRIPTION,TYPE,CONCEPTEUR, APP_TITLE,SUB_TITLE } from '../config';
+import { WIDTH, DESCRIPTION,TYPE,CONCEPTEUR, APP_TITLE,SUB_TITLE } from '../config';
 const SEO = () => {
     return (
 <Helmet>
 { /* Standard metadata tags */ }
 <title>{APP_TITLE}</title>
 <meta name='description' content={DESCRIPTION} />
+<meta name='viewport' content={WIDTH} />
 { /* End standard metadata tags */ }
 { /* Facebook tags */ }
 <meta property="og:type" content={TYPE} />
