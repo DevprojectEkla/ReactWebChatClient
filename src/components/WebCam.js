@@ -84,9 +84,12 @@ const WebCam = ({ users, currentUserData, socket }) => {
         )}`
       );
       if (turnConfig) {
+          console.warn(turnConfig)
         const configuration = {
           iceServers: [
+
               {urls: turnConfig.urls.stun,
+              username: turnConfig.username,
                   credential: turnConfig.credential,
 
               },
@@ -117,16 +120,18 @@ const WebCam = ({ users, currentUserData, socket }) => {
         return pc;
       } else {
         console.warn("Turn Credentials are not available yet");
+          getTurnConfig()
       }
     },
-    [addTracksToPc, turnConfig, getNewStreams, peerConnections]
+    [addTracksToPc, turnConfig, getNewStreams, peerConnections,getTurnConfig]
   );
 
   const createOffer = useCallback(
     async (socketId, pc) => {
-      console.dir(
-        `creating offer for ${socketId} and pc ${JSON.stringify(pc)}`
-      );
+      console.log(
+          "creating offer for:" ,socketId)
+        console.log("and pc:",pc)
+     
       const offerOpts = {
         offerToReceiveAudio: true,
         offerToReceiveVideo: true,
@@ -254,8 +259,8 @@ const WebCam = ({ users, currentUserData, socket }) => {
     },
     [peerConnections, remoteStreams, remoteVideoRefs, userStreamList]
   );
-  const handleOffer = useCallback( (offer) => {
-      logger.debug(`Received offer: ${offer}`);
+  const handleOffer = useCallback( async (offer) => {
+      console.info("Received offer:",offer);
       logger.debug("setting newOffer with the received offer:", offer);
       socketIdRef.current = offer.id;
       if (peerConnections.has(offer.id)) {
@@ -273,25 +278,24 @@ const WebCam = ({ users, currentUserData, socket }) => {
 
         // Create answer
         try {
-          pc.createAnswer()
-            .then((answer) => 
-                pc.setLocalDescription(answer))
-            .then(() => {
+            const answer = await pc.createAnswer();
+
+            if (answer) {
+            await pc.setLocalDescription(answer)
               const customAnswer = {
                 sender: socket.id,
                 receiver: offer.id,
                 answer: pc.localDescription,
               };
-              console.dir(
+              console.log(
                 `answer ${JSON.stringify(
                   customAnswer
                 )} correctly set, emitting right now ...`
               );
               socket.emit("answer", customAnswer);
-            })
-            .catch((error) => {
-              console.error("Error creating answer:", error);
-            });
+            } else {
+                console.error("Error creating answer, answer is:",answer);
+            };
         } catch (err) {
           logger.error(`Error creating webRTC Answer: ${err}`);
           if (pc.iceConnectionState === "failed") {
@@ -448,7 +452,6 @@ const WebCam = ({ users, currentUserData, socket }) => {
     };
   }, []);
 
-  useEffect(() => {}, []);
   useEffect(() => {
     if (videoStream) {
       logger.debug("adding element to RemoteStreams array");
@@ -456,7 +459,6 @@ const WebCam = ({ users, currentUserData, socket }) => {
     }
   }, [videoStream, socket]);
 
-  // Handle signaling messages
   
   useEffect(() => {
     if (peerConnections.size > 0) {
