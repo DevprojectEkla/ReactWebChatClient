@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { logger } from "../utils/logger";
 import { apiBaseUrl } from "../config";
-import { RemoteVideoContainer,RemoteVideo,LocalVideo } from "../styles/WebCamStyles";
+import {VideoButtonContainer, RemoteVideoContainer,RemoteVideo,LocalVideo } from "../styles/WebCamStyles";
+import VideoCamIcon from '@mui/icons-material/Videocam';
+import Button from '@mui/material/Button' 
 
 const WebCam = ({ users, currentUserData, socket }) => {
   const localStream = useRef(null);
+  const [webCamOn, setWebCamOn] = useState(false);
   const [peerConnections, setPeerConnections] = useState(new Map());
   const [newOffer, setNewOffer] = useState(null);
   const [videoStream, setVideoStream] = useState(null);
@@ -17,18 +20,33 @@ const WebCam = ({ users, currentUserData, socket }) => {
   const socketIdRef = useRef(null);
 
   const peerConnection = useRef(null);
-  const getMediaDevices = useCallback(() => {
+    const killCam = () => {
+
+if (localStream.current) {
+    let pc = peerConnection.current
+        const tracks = localStream.current.getTracks();
+        tracks.forEach((track) => {track.stop()
+            if (pc){
+        pc.removeTrack(peerConnection.current.getSenders().find(sender => sender.track === track))}}
+        );
+}
+localStream.current = null;
+
+    setWebCamOn(false)      
+
+    }
+  const getMediaDevices = () => {
+      setWebCamOn(true)
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
-        localStream.current = stream;
+          localStream.current = stream;
         localVideoRef.current.srcObject = stream;
-        logger.debug(JSON.stringify(localStream.current));
       })
       .catch((error) => {
         console.error("Error accessing media devices:", error);
-      });
-  }, []);
+      });}
+  
   const addTracksToPc = useCallback(async (pc) => {
     if (localStream.current) {
       logger.debug("localStream detected: adding tracks to PCs");
@@ -196,12 +214,13 @@ const WebCam = ({ users, currentUserData, socket }) => {
         logger.debug(
           `new user joined: ${data.username}, with socket: ${userId}, initializing PeerConnection`
         );
+          if (webCamOn){
         const pc = await initPeerConnection(userId);
         await createOffer(userId, pc);
-        getNewStreams(pc);
+        getNewStreams(pc);}
       }
     },
-    [createOffer, currentUserData.username, getNewStreams, initPeerConnection]
+    [createOffer, currentUserData.username, getNewStreams, initPeerConnection,webCamOn]
   );
   const handleUserLeft = useCallback(
     (data) => {
@@ -353,7 +372,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
     },
     [peerConnections]
   );
-  const renewOfferLocalStream = useCallback(() => {
+  const renewOfferLocalStream = () => {
     // Send offer to server
     if (localStream.current) {
       const offerOptions = {
@@ -380,10 +399,12 @@ const WebCam = ({ users, currentUserData, socket }) => {
             console.error("Error creating offer:", error);
           });
       }
+        else{
+            initPeerConnection()
+        }
     }
-  }, [socket, newOffer]);
-
-  useEffect(() => {
+  }
+useEffect(() => {
     getTurnConfig();
   }, [getTurnConfig]);
 
@@ -435,13 +456,12 @@ const WebCam = ({ users, currentUserData, socket }) => {
     socket,
   ]);
   useEffect(() => {
-    getMediaDevices();
     return () => {
       if (peerConnections.size > 0) {
         peerConnections.forEach((pc) => pc.close());
       }
     };
-  }, [peerConnections, getMediaDevices]);
+  }, [peerConnections]);
 
   useEffect(() => {
     return () => {
@@ -500,20 +520,32 @@ const WebCam = ({ users, currentUserData, socket }) => {
   }, [remoteStreams, remoteVideoRefs]);
 
   return (
-    <div>
+    <div>{ (webCamOn) ?
+        <VideoButtonContainer>
       <LocalVideo
         id="localVideo"
         ref={localVideoRef}
         autoPlay
         muted
-      ></LocalVideo>
-      <RemoteVideoContainer>
+        ></LocalVideo> 
+
+<Button onClick={() => killCam()} variant="contained" endIcon={<VideoCamIcon/>}>
+  Close Cam</Button>
+        </VideoButtonContainer>
+        : 
+
+
+        <Button onClick={() => getMediaDevices()} variant="contained" endIcon={<VideoCamIcon/>}>
+  Open Cam</Button>}
+      <div>
         {remoteVideoRefs.map((refStream, index) =>
           refStream !== null ? (
+      <RemoteVideoContainer>
             <RemoteVideo key={index} autoPlay ref={refStream}></RemoteVideo>
+      </RemoteVideoContainer>
           ) : null
         )}
-      </RemoteVideoContainer>
+      </div>
     </div>
   );
 };

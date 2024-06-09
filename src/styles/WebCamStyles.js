@@ -35,4 +35,9 @@ export const LocalVideo = styled.video`
     box-shadow: 0 0 10px ${colors.GBLUE_2_1}; /* Add shadow effect on hover */
   }
 `;
+export const VideoButtonContainer = styled.div`
+display:flex;
+flex-direction: column;
+align-items: center;
+`;
 
