@@ -18,13 +18,14 @@ const StyledGlobal = createGlobalStyle`body {
   background-repeat: no-repeat; 
   width: 100%; 
   max-width: 100vw; 
-  min-height: 100vh; 
+    /* min-height: 100vh; */
     @media (max-height:768px){
         padding-top: 15vh;
         flex-direction:row;
 
 
     }@media (max-width:768px){
+        min-height: 100vh; 
         padding-top: 15vh;
         flex-direction:row;
 

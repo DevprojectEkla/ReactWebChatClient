@@ -82,7 +82,7 @@ useEffect(() => {
         });
     }
 
-  const setImgSrc = (article) => {
+  const setImgSrc = async (article) => {
     // Assuming article is your object containing the image data
     const imageData = article.file.content.data;
     // logger.debug(imageData)
