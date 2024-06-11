@@ -1,14 +1,14 @@
 import { apiBaseUrl, THEME_COLOR } from "../config"; //ATTENTION: cette import utilise un symlink client/node_modules/config.js poitant vers ../../config.rs ce qui correspond à la racine du projet le fichier config devant être partagé entre server/ et client/
 import React, { useState, useEffect } from "react";
-import { logger } from "../utils/logger"
+import { logger } from "../utils/logger";
 import { Link } from "react-router-dom";
 import { CustomButton } from "./Button";
-import { ListArticleContainer } from "../styles/ArticlesStyles"
+import { ListArticleContainer } from "../styles/ArticlesStyles";
 import DynamicImageComponent from "./DynamicImageComponent";
 import { useScrollToTopContext } from "../contexts/ScrollToTop";
 import Spinner from "./Spinner";
 import { ClipLoader } from "react-spinners";
-import { getCookie} from "../utils/cookieUtils"
+import { getCookie } from "../utils/cookieUtils";
 
 const ArticlesList = () => {
   window.scrollTo(0, 0);
@@ -17,52 +17,45 @@ const ArticlesList = () => {
   let [reFetch, setRefetch] = useState(true);
   let [decodedImage, setDecodedImage] = useState(null);
   let [error, setError] = useState(null);
- 
-useEffect(() => {
-            if (articles.length === 0) {
-          
-    getArticles();
-      }
-  }, );
 
-  // useEffect(() => {
-  //   const cachedData = localStorage.getItem("cachedData");
-  //     const parsedData = JSON.parse(cachedData);
-  //     if (parsedData && Object.keys(parsedData).length > 0 && !reFetch) {
-  //       logger.debug("CACHED", cachedData)
-  //     setArticles(JSON.parse(cachedData));
-  //         logger.debug(reFetch)
-  //   } else {
-  //     getArticles();
-  //       setRefetch(false)
-  //   }
-  // }, [reFetch]);
+  useEffect(() => {
+    if (articles.length === 0) {
+      getArticles();
+    }
+  });
 
   const getArticles = async () => {
     try {
-        
-        const sessionData = await getCookie('session_data')
-        if (!sessionData) {throw new Error(`no session cookie available. You have to be logged in to get access to this resource`)
-            
-        }
-        const sessionId = sessionData.id
-        logger.debug("getArticles is triggered with session",sessionId)
-        let response = await fetch(apiBaseUrl + "/api/articles", {method: 'GET', headers:{
-            'Content-type':'application/json',
-            'Cookie':`session_data=${sessionData}`,
-        }});
+      const sessionData = await getCookie("session_data");
+      if (!sessionData) {
+        throw new Error(
+          `no session cookie available. You have to be logged in to get access to this resource`
+        );
+      }
+      const sessionId = sessionData.id;
+      logger.debug("getArticles is triggered with session", sessionId);
+      let response = await fetch(apiBaseUrl + "/api/articles", {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          Cookie: `session_data=${sessionData}`,
+        },
+      });
       if (!response.ok) {
-          if (response.status === 401){
-
-        throw new Error(`Failed to fetch articles. You Need to Be Logged in to Access this resource. Status Code: ${response.status}`);
-          }
-          else{
-        throw new Error(`Failed to fetch articles. Status: ${response.status}`);
-      }}
+        if (response.status === 401) {
+          throw new Error(
+            `Failed to fetch articles. You Need to Be Logged in to Access this resource. Status Code: ${response.status}`
+          );
+        } else {
+          throw new Error(
+            `Failed to fetch articles. Status: ${response.status}`
+          );
+        }
+      }
       let data = await response.json();
 
-        setArticles(data.map(article => ({...article,imageSrc:null})));
-        fetchImages(data);
+      setArticles(data.map((article) => ({ ...article, imageSrc: null })));
+      fetchImages(data);
       // localStorage.setItem("cachedData", JSON.stringify(data));
     } catch (error) {
       setError(error.message);
@@ -70,17 +63,16 @@ useEffect(() => {
     }
   };
 
-    const fetchImages = (articles) => {
-        articles.forEach( async (article,index) => {
-            const imageSrc = await setImgSrc(article);
-            setArticles(prevArticles => {
-                const newArticles = [...prevArticles];
-                newArticles[index].imageSrc = imageSrc;
-                return newArticles;
-            });
-            
-        });
-    }
+  const fetchImages = (articles) => {
+    articles.forEach(async (article, index) => {
+      const imageSrc = await setImgSrc(article);
+      setArticles((prevArticles) => {
+        const newArticles = [...prevArticles];
+        newArticles[index].imageSrc = imageSrc;
+        return newArticles;
+      });
+    });
+  };
 
   const setImgSrc = async (article) => {
     // Assuming article is your object containing the image data
@@ -99,6 +91,19 @@ useEffect(() => {
     const dataURL = URL.createObjectURL(blob);
     return dataURL;
   };
+  useEffect(() => {
+    const cachedData = localStorage.getItem("cachedData");
+    const parsedData = JSON.parse(cachedData);
+    if (parsedData && Object.keys(parsedData).length > 0 && !reFetch) {
+      logger.debug("CACHED", cachedData);
+      setArticles(JSON.parse(cachedData));
+      logger.debug(reFetch);
+    } else {
+      getArticles();
+      setRefetch(false);
+    }
+  }, [getArticles, reFetch]);
+
   const displayData = (articles) => {
     return articles.map((article, index) => (
       <div key={index}>

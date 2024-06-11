@@ -10,10 +10,12 @@ export const FooterContainer = styled.footer`
   bottom: 0;
   left: 0;
   margin-top: 5%;
-  @media (max-width: 768px) {
+  position: fixed;
+  @media (max-width: 868px) {
+    position: static;
     flex-direction: column;
     max-width: 100%;
-      margin-top: 10%;
+    margin-top: 10%;
   }
 `;
 
@@ -22,9 +24,9 @@ export const FooterContent = styled.div`
   flex-direction: row;
   justify-content: space-around;
   text-align: justify;
-  width: 100%; 
-  max-width: 100vw; 
-  margin: 0 ;
+  width: 100%;
+  max-width: 100vw;
+  margin: 0;
   @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
@@ -34,7 +36,7 @@ export const FooterContent = styled.div`
 
 export const FooterSection = styled.div`
   flex: 1;
-  margin-right: 20px;
+  margin-right: 2rem;
 `;
 
 export const SectionTitle = styled.h4`
@@ -48,7 +50,7 @@ export const SectionList = styled.ul`
 `;
 
 export const SectionListItem = styled.li`
-  margin-bottom: 8px;
+  margin-bottom: 1rem;
 `;
 
 export const SectionLink = styled.a`
@@ -61,7 +63,7 @@ export const SectionLink = styled.a`
 `;
 
 export const FooterBottom = styled.div`
-  margin-top: 20px;
+  margin-top: 1rem;
   text-align: center;
 `;
 

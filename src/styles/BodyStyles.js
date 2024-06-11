@@ -1,11 +1,12 @@
-import  { styled, createGlobalStyle } from "styled-components";
+import { styled, createGlobalStyle } from "styled-components";
 import { ASSETS, BACKGROUND } from "../config";
 
-const StyledGlobal = createGlobalStyle`body {
+export const StyledGlobal = createGlobalStyle`body {
     display: flex;
   flex-direction: column;
   margin: 0;
-    padding-top: 10%;
+    padding-top: 0;
+    height:100%;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
@@ -33,6 +34,14 @@ const StyledGlobal = createGlobalStyle`body {
     }
 }`;
 
+export const MainContent = styled.main`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  padding: 15%;
+  margin-bottom: 3rem;
+`;
 export const StyledDiv = styled.div`
     padding-top: 10vh
   flex-direction: column;
@@ -52,8 +61,8 @@ export const StyledBodyContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-    width: 100%; 
-  max-width: 100vw; 
+  width: 100%;
+  max-width: 100vw;
   @media (max-width: 768px) {
     flex-direction: column;
     justify-content: space-around;
@@ -70,18 +79,16 @@ export const MainButtonContainer = styled.div`
   }
 `;
 
-
 export const TextContainer = styled.div`
-
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    color: black;
-    text-align: justify;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 20px; 
-    margin: 20px; 
-    border-radius: 10px; 
-  `;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  color: black;
+  text-align: justify;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
+`;
 
 export default StyledGlobal;
