@@ -76,7 +76,7 @@ const SubscribeForm = ({ onSubmit }) => {
     const fileInput = e.target.files[0];
     setFile(fileInput);
     setFileInput(fileInput);
-    // console.log("Input File", fileInput);
+    console.log("Input File", fileInput);
     const reader = new FileReader();
     reader.onload = (event) => {
       const fileContent = event.target.result;
@@ -176,7 +176,7 @@ const SubscribeForm = ({ onSubmit }) => {
           {fileInput && (
             <DynamicImageComponent
               src={setSrcImg(rawData, fileInput.type)}
-              alt={`uploaded: ${fileInput.title}`}
+              alt={`uploaded: ${fileInput.name}`}
             />
           )}
         </InputLabelContainer>

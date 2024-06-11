@@ -1,5 +1,24 @@
 import { useState } from 'react';
-import {MUTLIPART_BOUNDARY} from './config';
+import { apiBaseUrl, MUTLIPART_BOUNDARY} from './config';
+
+
+export const login = async (email,password) => {
+let data = {
+      email: email,
+      password: password,
+    };
+    let response = await fetch(apiBaseUrl + "/api/login", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-type": "application/json" },
+    });
+    if (response.status === 404 || response.status === 500) {
+        console.error("login failed due to:",response.statusText)
+    } else {
+    }
+
+}
+
 export const setSrcImg = (dataFile, type) => {
     // console.log(`setting src attribute with data: ${dataFile} and type ${type}`)
     const binaryBuffer = new Uint8Array(dataFile);

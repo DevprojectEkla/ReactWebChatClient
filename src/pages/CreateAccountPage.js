@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import SubscribeForm from '../components/SubscribeForm';
 import PopUp from '../components/PopUp'
 import{ apiBaseUrl,MUTLIPART_BOUNDARY } from '../config'
-import {usePopup} from '../utils';
+import {login, usePopup} from '../utils';
 import {useNavigate} from 'react-router-dom';
 
 const CreateAccountPage = () => {
@@ -35,8 +35,14 @@ const CreateAccountPage = () => {
         fileData.append('password', formData.password)
         fileData.append('email', formData.email)
         fileData.append('quote', formData.quote)
-        fileData.append('filename', formData.file.name);
-        fileData.append('type',formData.file.type)
+        if (formData.file)
+        {fileData.append('filename', formData.file.name)
+        fileData.append('type', formData.file.type)
+        }
+        else {
+            fileData.append('filename','default')
+            fileData.append('type','image/png')
+        };
         fileData.append('content',formData.content)
     
     
@@ -59,11 +65,22 @@ const CreateAccountPage = () => {
           
                     setSuccess(true)
           configurePopup(true,"success",`Bienvenue sur ta plateforme ${data.userData.username}`)
+          login(formData.email,formData.password)
       } else {
 
         // Handle error
-        console.error('Error creating account');
-      }
+          console.error('Error creating account',response.status,response.statusText);
+        switch (response.status) {
+            case 409:
+                configurePopup(true,"failure","Un nom d'utilisateur est déjà associé à cet email")
+                
+                break;
+
+            default:
+                configurePopup(true,"failure",`An error ${response.status} occured: ${response.statusText}`)
+                break;
+        }
+              }
     } catch (error) {
           configurePopup(true,"failure",`cannot create account due to ${error}`)
       // Handle network error

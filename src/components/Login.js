@@ -43,7 +43,6 @@ window.location.href =  redirectUri
       navigate("/");
     }
   };
-
   const onClick = async () => {
     setEmailError("");
     setPasswordError("");
