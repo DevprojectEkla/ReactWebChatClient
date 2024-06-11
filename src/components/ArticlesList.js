@@ -61,13 +61,27 @@ useEffect(() => {
       }}
       let data = await response.json();
 
-      setArticles(data);
+        setArticles(data.map(article => ({...article,imageSrc:null})));
+        fetchImages(data);
       // localStorage.setItem("cachedData", JSON.stringify(data));
     } catch (error) {
       setError(error.message);
       logger.debug(error);
     }
   };
+
+    const fetchImages = (articles) => {
+        articles.forEach( async (article,index) => {
+            const imageSrc = await setImgSrc(article);
+            setArticles(prevArticles => {
+                const newArticles = [...prevArticles];
+                newArticles[index].imageSrc = imageSrc;
+                return newArticles;
+            });
+            
+        });
+    }
+
   const setImgSrc = (article) => {
     // Assuming article is your object containing the image data
     const imageData = article.file.content.data;
@@ -90,7 +104,7 @@ useEffect(() => {
       <div key={index}>
         <h3>{article.title}</h3>
         <DynamicImageComponent
-          src={setImgSrc(article)}
+          src={article.imageSrc}
           alt={`Image pour ${article.title}`}
         />
         <CustomButton>

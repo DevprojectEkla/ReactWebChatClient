@@ -10,11 +10,10 @@ export const logLevel = {
 export const currentLogLevel = fetch(apiBaseUrl + '/api/debug') === 'True' ? logLevel.debug : logLevel.info;
 
 export const logger = {
-  debug: (message) => log("debug", message),
-  info: (message) => log("info", message),
-  warn: (message) => log("warn", message),
-  error: (message) => log("error", message),
-};
+ debug: (message, ...args) => log("debug", message, ...args),
+  info: (message, ...args) => log("info", message, ...args),
+  warn: (message, ...args) => log("warn", message, ...args),
+  error: (message, ...args) => log("error", message, ...args),};
 
 export const log = (level, message, ...args) => {
   if (logLevel[level] >= currentLogLevel) {
