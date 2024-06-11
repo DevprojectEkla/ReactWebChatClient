@@ -13,6 +13,6 @@ jobs:
         run: |
           curl -X POST \
             -H "Accept: application/vnd.github.everest-preview+json" \
-            -H "Authorization: token ${{ secrets.DEPLOYMENT_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.GH_PAT_CLIENT_HOOK}}" \
             https://api.github.com/repos/devprojectekla/NodeReactPlatform/dispatches \
             -d '{"event_type":"client-update"}'
