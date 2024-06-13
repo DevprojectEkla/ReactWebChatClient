@@ -6,11 +6,9 @@ export const FooterContainer = styled.footer`
   width: 100%;
   max-width: 100vw;
   color: #fff;
-  padding: 20px;
   bottom: 0;
   left: 0;
   margin-top: 5%;
-  position: fixed;
   @media (max-width: 868px) {
     position: static;
     flex-direction: column;

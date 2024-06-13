@@ -21,7 +21,8 @@ export const HeaderContainer = styled.div`
 @media (max-width: 768px){
     display:flex;
     flex-direction:column;
-    flex:1;
+    flex:1
+    margin-bottom:10%;
 }
 `;
 

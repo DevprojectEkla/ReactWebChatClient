@@ -10,9 +10,13 @@ import {
 import VideoCamIcon from "@mui/icons-material/Videocam";
 import Button from "@mui/material/Button";
 
-const WebCam = ({ users, currentUserData, socket }) => {
+const WebCam = ({ socket }) => {
   const localStream = useRef(null);
+  const receivedIceCandidate = useRef(new Set());
   const [webCamOn, setWebCamOn] = useState(false);
+  const [peerIsOffering, setPeerIsOffering] = useState(false);
+
+  const [tracksOn, setTracksOn] = useState(false);
   const peerConnections = useRef(new Map());
   const [newOffer, setNewOffer] = useState(null);
   const [videoStream, setVideoStream] = useState(null);
@@ -58,44 +62,42 @@ const WebCam = ({ users, currentUserData, socket }) => {
       .catch((error) => {
         console.error("Error accessing media devices:", error);
       });
-    let pc = peerConnection.current;
-    if (pc && pc.signalingState === "stable") {
-      console.log("renewing offer");
-      const offerOptions = {
-        iceRestart: true,
-        offerToReceiveAudio: true,
-        offerToReceiveVideo: true,
-      };
-      await addTracksToPc(pc);
-      getNewStreams(pc);
-
-      pc.createOffer(offerOptions)
-        .then((offer) => {
-          setNewOffer(offer);
-          peerConnection.current.setLocalDescription(offer);
-          socket.emit("renewOffer", offer);
-        })
-        .catch((error) => {
-          console.error("Error creating offer:", error);
+      if (webCamOn) {
+      let pc = peerConnection.current;
+      if (pc && pc.signalingState !== "closed") {
+        console.log("renewing offer for users:", peerConnections.current);
+        if (!tracksOn) {
+          addTracksToPc(pc);
+          setTracksOn(true);
+        }
+        const otherUsers = Array.from(peerConnections.current).filter(
+          ([id, _]) => id !== socket.id
+        );
+        otherUsers.forEach(async (id) => {
+          await createOffer(id, pc);
         });
-    } else {
-      for (let user in users) {
-        initPeerConnection(user.socketId);
+        getNewStreams(pc);
       }
     }
+
   };
 
   const addTracksToPc = useCallback(async (pc) => {
+    const sender = pc.getSenders().find((s) => s.track);
     if (localStream.current) {
       logger.debug("localStream detected: adding tracks to PCs");
-      const tracks = await localStream.current.getTracks();
-      logger.debug("Tracks from the client stream", tracks);
+      if (sender) {
+        pc.getSenders().replaceTrack(localStream.current);
+      } else {
+        const tracks = await localStream.current.getTracks();
+        logger.debug("Tracks from the client stream", tracks);
 
-      // Add each track to the peer connection
-      tracks.forEach((track) => {
-        logger.debug(`setting tracks for PC:${JSON.stringify(pc)}`);
-        pc.addTrack(track, localStream.current);
-      });
+        // Add each track to the peer connection
+        tracks.forEach((track) => {
+          logger.debug(`setting tracks for PC:${JSON.stringify(pc)}`);
+          pc.addTrack(track, localStream.current);
+        });
+      }
     }
   }, []);
 
@@ -134,9 +136,9 @@ const WebCam = ({ users, currentUserData, socket }) => {
   );
 
   const initPeerConnection = useCallback(
-    async (userId) => {
+    async (socketId) => {
       logger.info("Initializing New Peer Connection for user:", [
-        userId,
+        socketId,
         turnConfig,
       ]);
       if (turnConfig) {
@@ -177,18 +179,16 @@ const WebCam = ({ users, currentUserData, socket }) => {
         // const pc = new RTCPeerConnection();
         peerConnection.current = pc;
 
-        peerConnections.current.set(userId, pc);
+        peerConnections.current.set(socketId, pc);
         logger.debug("new peer added to PeerConnections:", peerConnections);
-        await addTracksToPc(pc);
-
-        getNewStreams(pc);
+     
         return pc;
       } else {
         console.warn("Turn Credentials are not available yet");
         getTurnConfig();
       }
     },
-    [addTracksToPc, turnConfig, getNewStreams, getTurnConfig]
+    [turnConfig, getTurnConfig]
   );
 
   const createOffer = useCallback(
@@ -197,29 +197,31 @@ const WebCam = ({ users, currentUserData, socket }) => {
       console.log("and pc:", pc);
 
       const offerOpts = {
+        // iceRestart: true,
         offerToReceiveAudio: true,
         offerToReceiveVideo: true,
       };
       if (pc) {
+       pc.onicecandidate = async (event) => {
+          if (event.candidate) {
+            const iceCandidate = {
+              sender: socket.id,
+              receiver: socketId,
+              candidate: event.candidate,
+            };
+            console.info(
+              "gathering ice candidate and emitting:",
+              event.candidate
+            );
+            // Send ICE candidate to the server
+            socket.emit("iceCandidate", iceCandidate);
+          }
+        };
+
         pc.createOffer(offerOpts)
 
           .then(async (offer) => {
             await pc.setLocalDescription(offer);
-            pc.onicecandidate = async (event) => {
-              if (event.candidate) {
-                const iceCandidate = {
-                  sender: socket.id,
-                  receiver: socketId,
-                  candidate: event.candidate,
-                };
-                console.info(
-                  "gathering ice candidate and emitting:",
-                  event.candidate
-                );
-                // Send ICE candidate to the server
-                socket.emit("iceCandidate", iceCandidate);
-              }
-            };
 
             socket.emit("offer", { socketId: socketId, offer: offer });
           })
@@ -230,52 +232,40 @@ const WebCam = ({ users, currentUserData, socket }) => {
     },
     [socket]
   );
+  //the user is already connected and a new user join the room
   const handleUserJoined = useCallback(
     async (data) => {
-      //a user join and is alone in the room
-      if (
-        data.username === currentUserData.username &&
-        data.users.length === 1
-      ) {
-        logger.debug("Salut t'es tout seul mon vieux");
-      }
-      //the user connect for the first time and triggers userJoined with its own data
-      // but he is not alone in the room
-      else if (
-        data.username === currentUserData.username &&
-        data.users.length > 1
-      ) {
-        console.info("hé mais t'es pas tout seul en plus !");
-        const otherUsers = data.users.filter(
-          (user) => user.userData.username !== currentUserData.username
-        );
-        console.info("voici les autres utilisateurs déjà connecté", otherUsers);
-        otherUsers.forEach(async (userData) => {
-          const pc = await initPeerConnection(userData.socketId);
-        });
-      }
-      //the user is already connected and a new user join the room
-      else if (data.username !== currentUserData.username) {
-        const userId = data.socketId;
-        logger.debug(
-          `new user joined: ${data.username}, with socket: ${userId}, initializing PeerConnection`
-        );
-        if (webCamOn) {
-          const pc = await initPeerConnection(userId);
-          await createOffer(userId, pc);
-          getNewStreams(pc);
-        }
-      }
-    },
-    [
-      createOffer,
-      currentUserData.username,
-      getNewStreams,
-      initPeerConnection,
-      webCamOn,
-    ]
-  );
+      console.info("hé tu n'es plus tout seul maintenant !");
 
+      console.info("voici le nouvel utilisateur", data.username);
+      const socketId = data.socketId;
+      logger.debug(
+        `new user joined: ${data.username}, with socket: ${socketId}, initializing PeerConnection`
+      );
+      const pc = await initPeerConnection(socketId);
+
+      getNewStreams(pc);
+      if (webCamOn) {
+        await addTracksToPc(pc);
+        setTracksOn(true);
+      }
+      await createOffer(socketId, pc);
+    },
+
+    [addTracksToPc, createOffer, getNewStreams, initPeerConnection, webCamOn]
+  );
+  const handleConnect = useCallback(
+    async (users) => {
+      console.warn("users, socketId", users, socket.id);
+      const otherUsers = users.filter((user) => user.socketId !== socket.id);
+      console.warn("filtered:", otherUsers);
+      otherUsers.forEach(
+        async (user) => await initPeerConnection(user.socketId)
+      );
+      console.debug("Users for handle connected:", users);
+    },
+    [socket.id, initPeerConnection]
+  );
   const handleCamTurnedOff = useCallback(
     (data) => {
       console.warn("Cam turned off");
@@ -365,8 +355,11 @@ const WebCam = ({ users, currentUserData, socket }) => {
       }
       if (!peerConnections.current.has(offer.id)) {
         logger.info(`no peerConnection associated with id:`, offer.id);
-        await initPeerConnection(offer.id);
-        await addTracksToPc(peerConnection.current);
+        const pc = await initPeerConnection(offer.id);
+        if (webCamOn) {
+          await addTracksToPc(peerConnection.current);
+        }
+        getNewStreams(pc);
         handleOffer(offer);
       } else {
         const sessionDescription = new RTCSessionDescription(offer.offer);
@@ -377,9 +370,17 @@ const WebCam = ({ users, currentUserData, socket }) => {
 
         // Create answer
         try {
-          const answer = await pc.createAnswer();
+          const answer = await pc.createAnswer({
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: true,
+            // iceRestart: true,
+          });
+          console.log("Answer for localDescription :", answer);
 
           if (answer && pc.signalingState !== "stable") {
+            console.log("starting gathering ICE Candidates for:", offer.id);
+            console.log("from:", socket.id);
+
             await pc.setLocalDescription(answer);
             const customAnswer = {
               sender: socket.id,
@@ -404,7 +405,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
         }
       }
     },
-    [socket, initPeerConnection, addTracksToPc]
+    [socket, initPeerConnection, addTracksToPc, getNewStreams, webCamOn]
   );
   const handleAnswer = useCallback(
     async (answer) => {
@@ -426,10 +427,11 @@ const WebCam = ({ users, currentUserData, socket }) => {
         await pc.setRemoteDescription(new RTCSessionDescription(answer.answer));
         pc.remoteDescriptionSet = true; //this avoid multiple rerenders of the same state
         // with the answer being set multiple times causing errors
+        console.log("new state after SDP:", pc.signalingState);
+        getNewStreams(pc)
       }
-      const senders = pc.getSenders();
-      logger.debug("SENDERS", senders);
-      getNewStreams(pc);
+      // const senders = pc.getSenders();
+      // logger.debug("SENDERS", senders);
     },
     [getNewStreams]
   );
@@ -461,11 +463,29 @@ const WebCam = ({ users, currentUserData, socket }) => {
       try {
         if (pc.iceGatheringState === "complete") {
           logger.info("ICE gathering complete");
+          logger.info("Adding local tracks to own pc");
+          await addTracksToPc();
           pc.iceGatheringComplete = true; // Mark ICE gathering as complete
-        } else {
-          pc.addIceCandidate(new RTCIceCandidate(iceCandidate.candidate));
-          await addTracksToPc(pc);
-          getNewStreams(pc);
+        } else if (
+          pc.iceGatheringState === "new" ||
+          pc.iceGatheringState === "gathering"
+        ) {
+          console.log("Gathering State for candidate:", pc.iceGatheringState);
+          if (receivedIceCandidate.current.has(iceCandidate.candidate)) {
+            console.warn(
+              "Ignoring Duplicate Ice Candidate",
+              iceCandidate.candidate
+            );
+            return;
+          } else {
+            pc.addIceCandidate(new RTCIceCandidate(iceCandidate.candidate));
+            receivedIceCandidate.current.add(iceCandidate.candidate);
+            console.info(
+              "added new candidate to receivedIceCandidate Set",
+              receivedIceCandidate.current
+            );
+            getNewStreams(pc);
+          }
         }
       } catch (error) {
         console.error("cannot add ice candidate", iceCandidate.candidate);
@@ -477,7 +497,6 @@ const WebCam = ({ users, currentUserData, socket }) => {
     // Send offer to server
     if (localStream.current) {
       const offerOptions = {
-        iceRestart: true,
         offerToReceiveAudio: true,
         offerToReceiveVideo: true,
       };
@@ -502,6 +521,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
     }
   };
 
+  
   useEffect(() => {
     getTurnConfig();
   }, [getTurnConfig]);
@@ -521,6 +541,10 @@ const WebCam = ({ users, currentUserData, socket }) => {
 
   useEffect(() => {
     const initializeSocket = () => {
+      socket.on("connected", (users) => {
+        console.log("WebCam Comp connected");
+        handleConnect(users);
+      });
       socket.on("camTurnedOff", (data) => {
         handleCamTurnedOff(data);
       });
@@ -532,6 +556,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
         await handleUserJoined(data);
       });
       socket.on("offer", (offer) => {
+          setPeerIsOffering(true)
         handleOffer(offer);
       });
       socket.on("answer", (answer) => {
@@ -551,6 +576,7 @@ const WebCam = ({ users, currentUserData, socket }) => {
       socket.off("answer");
     };
   }, [
+    handleConnect,
     handleCamTurnedOff,
     handleUserLeft,
     handleUserJoined,
@@ -560,9 +586,10 @@ const WebCam = ({ users, currentUserData, socket }) => {
     socket,
   ]);
   useEffect(() => {
+    const pc =  peerConnection.current
     return () => {
-      if (peerConnections.current.size > 0) {
-        peerConnections.current.forEach((pc) => pc.close());
+      if (pc && pc.size > 0) {
+        pc.forEach((pc) => pc.close());
       }
     };
   }, []);

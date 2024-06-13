@@ -1,5 +1,5 @@
 import { apiBaseUrl, THEME_COLOR } from "../config"; //ATTENTION: cette import utilise un symlink client/node_modules/config.js poitant vers ../../config.rs ce qui correspond à la racine du projet le fichier config devant être partagé entre server/ et client/
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { logger } from "../utils/logger";
 import { Link } from "react-router-dom";
 import { CustomButton } from "./Button";
@@ -24,7 +24,18 @@ const ArticlesList = () => {
     }
   });
 
-  const getArticles = async () => {
+  const fetchImages = useCallback((articles) => {
+    articles.forEach(async (article, index) => {
+      const imageSrc = await setImgSrc(article);
+      setArticles((prevArticles) => {
+        const newArticles = [...prevArticles];
+        newArticles[index].imageSrc = imageSrc;
+        return newArticles;
+      });
+    });
+  }, []);
+
+  const getArticles = useCallback(async () => {
     try {
       const sessionData = await getCookie("session_data");
       if (!sessionData) {
@@ -61,18 +72,7 @@ const ArticlesList = () => {
       setError(error.message);
       logger.debug(error);
     }
-  };
-
-  const fetchImages = (articles) => {
-    articles.forEach(async (article, index) => {
-      const imageSrc = await setImgSrc(article);
-      setArticles((prevArticles) => {
-        const newArticles = [...prevArticles];
-        newArticles[index].imageSrc = imageSrc;
-        return newArticles;
-      });
-    });
-  };
+  }, [fetchImages]);
 
   const setImgSrc = async (article) => {
     // Assuming article is your object containing the image data

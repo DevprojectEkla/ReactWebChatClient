@@ -110,10 +110,10 @@ export const Message = styled.div`
     align-self: flex-end;
       color:rgba(230, 240, 255, 1);
     background-color: rgba(230, 240, 255, 0.2);
-    margin-left: auto;
+    margin-left: 20%;
       padding:auto ;
     font-size:auto ;
-    width: 40%;
+    width: auto;
   `
       : `
     align-self: flex-start;
@@ -122,7 +122,7 @@ export const Message = styled.div`
     margin-right: auto; /* Pushes the receiver's message to the left */
     padding: 10px; /* Default padding for receiver's message */
     font-size: 16px; /* Default font size for receiver's message */
-    width: 50%; /* Adjust the width to make it slightly wider */
+    width: auto; /* Adjust the width to make it slightly wider */
   `}
 
   &:hover {

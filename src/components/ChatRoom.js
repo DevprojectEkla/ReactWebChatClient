@@ -31,7 +31,8 @@ const colors = require("../styles/colors")
 const ChatRoom = () => {
   const [messages, setMessages] = useState([]);
   const [userSenderId, setUserSenderId] = useState("");
-  const [currentUserData, setCurrentUserData] = useState("");
+  const [currentUserSet, setCurrentUserSet] = useState(false);
+  const currentUserData = useRef("");
   const [users, setUsers] = useState([]);
   const [newUserData, setNewUserData] = useState(null);
   const [userName, setUserName] = useState("");
@@ -89,7 +90,7 @@ const ChatRoom = () => {
           ? createIoDevClient(userData)
           : createIoProdClient(userData);
         setSocket(socketInstance);
-        setCurrentUserData(userData);
+        currentUserData.current = userData;
 
         // logger.debug("socket created", socket);
       }
@@ -108,10 +109,15 @@ const ChatRoom = () => {
   }, [socket]);
   useEffect(() => {
     if (socket) {
+        socket.on("connected",(users)=>{
+            setUsers(users)
+            setCurrentUserSet(true);
+            return console.info("I am connected",currentUserData.current, users)})
+
       socket.on("message", handleMessage);
       scrollToBottom();
       logger.debug("handling message", socket);
-
+    
       socket.emit("joinRoom", { room: "chatRoom" });
 
       // Listen for the 'userJoined' event
@@ -136,7 +142,7 @@ const ChatRoom = () => {
 
       // Listen for the 'userLeft' event
       socket.on("userLeft", (data) => {
-        logger.debug(`User ${data.username} left the chat room`);
+        console.info(`User ${data.username} left the chat room`);
         setUsers((prevUsers) =>
           prevUsers.filter((user) => user.userData.username !== data.username)
         );
@@ -171,8 +177,6 @@ const ChatRoom = () => {
           <WebCam
             socket={socket}
             newUser={newUserData}
-            users={users}
-            currentUserData={currentUserData}
           />
         ) : (
           <></>
