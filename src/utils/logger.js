@@ -7,7 +7,19 @@ export const logLevel = {
   error: 3,
 };
 
-export const currentLogLevel = fetch(apiBaseUrl + '/api/debug') === 'True' ? logLevel.debug : logLevel.info;
+const printLogLevel = {
+    0: "Debug",
+    1: "Info",
+    2: "Warn",
+    3: "error",
+
+} 
+
+let debug;
+const getDebugVar = await fetch(apiBaseUrl + '/api/debug').then(res => res.json()).then(data =>  debug = data)
+const currentLogLevel = debug 
+    === "True" ? logLevel.debug : logLevel.info;
+console.warn("DEBUG LEVEL:",printLogLevel[currentLogLevel])
 
 export const logger = {
  debug: (message, ...args) => log("debug", message, ...args),
