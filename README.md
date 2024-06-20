@@ -1,70 +1,24 @@
-# Getting Started with Create React App
+# React Client Application with WebRTC, WebSocket and Node.js Backend Integration
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This React application serves as the client for the Node.js backend server. It is designed to facilitate WebRTC for video streaming and utilizes WebSocket (via Socket.io) for real-time communication. The application provides a chat room where users can exchange basic text messages and turn on their webcams for video conferencing. Although some features, like the forum, are still under development, the core functionalities are in place.
 
-## Available Scripts
+The application can be served by the Node.js backend server or run independently using the `npm start` command provided by Create React App.
 
-In the project directory, you can run:
+## Key Features
+- **WebRTC for Video Streaming**: Implements WebRTC for peer-to-peer video streaming, enabling real-time video communication.
+- **WebSocket Integration**: Uses Socket.io for WebSocket communication, allowing real-time, bidirectional interactions with the Node.js backend server.
+- **Chat Room**: Provides a chat room where users can exchange basic text messages in real-time.
+- **Video Conferencing**: Allows users to turn on their webcams for video conferencing, enhancing real-time communication.
+- **Node.js Backend Server**: Communicates with the Node.js backend server for data management, business logic, and signaling for WebRTC.
+- **Create React App**: Built using Create React App, allowing it to be easily run with `npm start` for development purposes.
+- **Under Development**: Certain features, such as the forum, are still being built and are not fully functional yet.
 
-### `npm start`
+## Running the Application
+The application can be run in two ways:
+1. **Served by Node.js Backend**: The Node.js backend server can serve the React application, providing a unified deployment and serving environment.
+2. **Development Mode**: Use the `npm start` command to run the application in development mode, leveraging Create React App's development server.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+To run the application in development mode:
+```bash
+npm start
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
