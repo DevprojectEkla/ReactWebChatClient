@@ -1,4 +1,4 @@
-import { apiBaseUrl, THEME_COLOR } from "../config"; //ATTENTION: cette import utilise un symlink client/node_modules/config.js poitant vers ../../config.rs ce qui correspond à la racine du projet le fichier config devant être partagé entre server/ et client/
+import { apiBaseUrl, THEME_COLOR } from "../config";
 import React, { useState, useEffect, useCallback } from "react";
 import { logger } from "../utils/logger";
 import { Link } from "react-router-dom";
@@ -17,23 +17,6 @@ const ArticlesList = () => {
   let [reFetch, setRefetch] = useState(true);
   let [decodedImage, setDecodedImage] = useState(null);
   let [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (articles.length === 0) {
-      getArticles();
-    }
-  });
-
-  const fetchImages = useCallback((articles) => {
-    articles.forEach(async (article, index) => {
-      const imageSrc = await setImgSrc(article);
-      setArticles((prevArticles) => {
-        const newArticles = [...prevArticles];
-        newArticles[index].imageSrc = imageSrc;
-        return newArticles;
-      });
-    });
-  }, []);
 
   const getArticles = useCallback(async () => {
     try {
@@ -64,54 +47,44 @@ const ArticlesList = () => {
         }
       }
       let data = await response.json();
+      setArticles(data);
 
-      setArticles(data.map((article) => ({ ...article, imageSrc: null })));
-      fetchImages(data);
+      // fetchImages(data);
       // localStorage.setItem("cachedData", JSON.stringify(data));
     } catch (error) {
       setError(error.message);
       logger.debug(error);
     }
-  }, [fetchImages]);
+  }, []);
 
-  const setImgSrc = async (article) => {
-    // Assuming article is your object containing the image data
-    const imageData = article.file.content.data;
-    // logger.debug(imageData)
-
-    // Create a Uint8Array from the array of integers
-    const uint8Array = new Uint8Array(imageData);
-    // logger.debug(decoded)
-
-    // Create a Blob from the Uint8Array
-    const blob = new Blob([uint8Array], { type: article.file.mimeType });
-    // logger.debug(blob)
-
-    // Create a data URL for the Blob
-    const dataURL = URL.createObjectURL(blob);
-    return dataURL;
-  };
   useEffect(() => {
-    const cachedData = localStorage.getItem("cachedData");
-    const parsedData = JSON.parse(cachedData);
-    if (parsedData && Object.keys(parsedData).length > 0 && !reFetch) {
-      logger.debug("CACHED", cachedData);
-      setArticles(JSON.parse(cachedData));
-      logger.debug(reFetch);
-    } else {
+    if (articles.length === 0) {
       getArticles();
-      setRefetch(false);
     }
-  }, [getArticles, reFetch]);
+  });
+
+  // useEffect(() => {
+  //   const cachedData = localStorage.getItem("cachedData");
+  //   const parsedData = JSON.parse(cachedData);
+  //   if (parsedData && Object.keys(parsedData).length > 0 && !reFetch) {
+  //     logger.debug("CACHED", cachedData);
+  //     setArticles(JSON.parse(cachedData));
+  //     logger.debug(reFetch);
+  //   } else {
+  //     getArticles();
+  //     setRefetch(false);
+  //   }
+  // }, [getArticles, reFetch]);
 
   const displayData = (articles) => {
     return articles.map((article, index) => (
       <div key={index}>
         <h3>{article.title}</h3>
         <DynamicImageComponent
-          src={article.imageSrc}
-          alt={`Image pour ${article.title}`}
+          // src={article.imageSrc}
+          article={article}
         />
+
         <CustomButton>
           <Link
             to={`detail/${index}`}
