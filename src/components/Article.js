@@ -51,8 +51,7 @@ const Article = ({ article, index }) => {
           </div>
           <div>
             <DynamicImageComponent
-              src={setSrcImg(article.file.content.data)}
-              alt={`Titre: ${article.title}`}
+             article={article} 
             ></DynamicImageComponent>
           </div>
           <div className="articleContent">

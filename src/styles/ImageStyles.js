@@ -1,10 +1,11 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 // Create a styled component for the image container
 export const ImageContainer = styled.div`
   max-width: 100%;
   height: auto;
   border-radius: 8px;
+  padding: 5%;
   // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 

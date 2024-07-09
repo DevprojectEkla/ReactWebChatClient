@@ -31,7 +31,7 @@ const DynamicImageComponent = ({ article }) => {
   return (
     <ImageContainer>
       {article.imageSrc ? (
-        <StyledImage src={srcImg} alt={article.title} />
+        <StyledImage src={article.imageSrc} alt={article.title} />
       ) : (
         <div>
           Loading Image...
