@@ -4,7 +4,6 @@ import { ClipLoader } from "react-spinners";
 import { apiBaseUrl, THEME_COLOR } from "../config";
 import { logger } from "../utils/logger";
 
-// Use the styled components in your React component
 export const DynamicImageComponent = ({ src, alt }) => {
   return (
     <ImageContainer>
@@ -25,7 +24,7 @@ export const DynamicArticleImageComponent = ({ article }) => {
       `data:${data.file.mimeType};base64,${data.file.content}`
     );
     const blob = await base64Response.blob();
-    // logger.debug(blob);
+    logger.debug(JSON.stringify(blob));
     // Create a data URL for the Blob
     const dataURL = URL.createObjectURL(blob);
     article.imageSrc = dataURL;

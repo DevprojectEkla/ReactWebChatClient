@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useHeaderContext } from "../contexts/HeaderContext";
-import { useScrollToTopContext } from "../contexts/ScrollToTop";
 import { DynamicArticleImageComponent } from "./DynamicImageComponent";
 import { MyButton } from "./Button";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { apiBaseUrl } from "../config";
 const { loremIpsum } = require("lorem-ipsum");
 const Article = ({ article, index }) => {
@@ -14,13 +13,6 @@ const Article = ({ article, index }) => {
     format: "html", // Output format: 'html' or 'text'
   });
   const { setHeaderTitle } = useHeaderContext();
-  const scrollPosition = useScrollToTopContext();
-  const setSrcImg = (data) => {
-    const uint8Array = new Uint8Array(data);
-    const blob = new Blob([uint8Array], { type: article.file.type });
-    const dataUrl = URL.createObjectURL(blob);
-    return dataUrl;
-  };
   useEffect(() => {
     const fetchArticle = async () => {
       try {

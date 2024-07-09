@@ -1,17 +1,14 @@
 import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import {
-  BrowseButton,
   FormContainer,
   H1,
   InputLabelContainer,
   Label,
   Input,
   TextArea,
-  FileInput,
   SubmitForm,
   ErrorMessage,
-  SuccessMessage,
 } from "../styles/FormStyles";
 
 import { useState } from "react";
@@ -44,7 +41,7 @@ const ContactForm = ({ onSubmit }) => {
       return;
     }
 
-    // Assuming onSubmit is a function passed as a prop to handle form submission
+    // onSubmit is the function passed as a prop to handle form submission
     onSubmit({ mailTo, mailFrom, subject, message });
   };
   const handleMailToChanged = (e) => {
@@ -75,26 +72,6 @@ const ContactForm = ({ onSubmit }) => {
       setSubjectError("");
     }
   };
-  // let decoder = new TextDecoder("utf-8");
-  //const handleFileChange = (e) => {
-  //  const fileInput = e.target.files[0];
-  //  setFile(fileInput);
-  //  setFileInput(fileInput);
-  //  // console.log("Input File", fileInput);
-  //  const reader = new FileReader();
-  //  reader.onload = (event) => {
-  //    const fileContent = event.target.result;
-  //    // console.log("File Content", fileContent);
-  //    // let decodedContent = decoder.decode(fileContent);
-  //    // let        encoder = new TextEncoder()
-  //    // let        encoded =encoder.encode(fileContent)
-  //    setRawData(binaryStringToBytesArray(fileContent));
-  //    let encoded = btoa(fileContent);
-  //    // console.log("base64 encoding:", encoded);
-  //    setContent(encoded);
-  //  };
-  //  reader.readAsBinaryString(fileInput);
-  //};
 
   const handleMessageChange = (e) => {
     setMessage(e.target.value);
@@ -166,27 +143,6 @@ const ContactForm = ({ onSubmit }) => {
           </Label>
         </InputLabelContainer>
 
-        {/*<InputLabelContainer>
-          <Label>
-            Choisissez une image pour votre avatar:
-            <FileInput
-              id="file"
-              type="file"
-              onInput={handleFileChange}
-              accept="image/*"
-            />
-            <BrowseButton htmlFor="file">Parcourir</BrowseButton>
-          </Label>
-          </InputLabelContainer>*/}
-        {/*<InputLabelContainer>
-          {fileInput && <Label>Votre avatar:</Label>}{" "}
-          {fileInput && (
-            <DynamicImageComponent
-              src={setSrcImg(rawData, fileInput.type)}
-              alt={`uploaded: ${fileInput.title}`}
-            />
-          )}
-              </InputLabelContainer>*/}
         <SubmitForm>
           <Button
             onClick={handleSubmit}

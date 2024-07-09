@@ -5,17 +5,12 @@ import { Link } from "react-router-dom";
 import { CustomButton } from "./Button";
 import { ListArticleContainer } from "../styles/ArticlesStyles";
 import { DynamicArticleImageComponent } from "./DynamicImageComponent";
-import { useScrollToTopContext } from "../contexts/ScrollToTop";
-import Spinner from "./Spinner";
 import { ClipLoader } from "react-spinners";
 import { getCookie } from "../utils/cookieUtils";
 
 const ArticlesList = () => {
   window.scrollTo(0, 0);
   let [articles, setArticles] = useState([]);
-  let [title, setTitle] = useState("");
-  let [reFetch, setRefetch] = useState(true);
-  let [decodedImage, setDecodedImage] = useState(null);
   let [error, setError] = useState(null);
 
   const getArticles = useCallback(async () => {
@@ -49,7 +44,6 @@ const ArticlesList = () => {
       let data = await response.json();
       setArticles(data);
 
-      // fetchImages(data);
       // localStorage.setItem("cachedData", JSON.stringify(data));
     } catch (error) {
       setError(error.message);
@@ -80,10 +74,7 @@ const ArticlesList = () => {
     return articles.map((article, index) => (
       <div key={index}>
         <h3>{article.title}</h3>
-        <DynamicArticleImageComponent
-          // src={article.imageSrc}
-          article={article}
-        />
+        <DynamicArticleImageComponent article={article} />
 
         <CustomButton>
           <Link
@@ -124,11 +115,4 @@ const ArticlesList = () => {
   );
 };
 
-const binaryToString = (base64Data) => {
-  const binaryData = atob(base64Data);
-  const textDecoder = new TextDecoder("utf-8");
-  return textDecoder.decode(
-    new Uint8Array(binaryData.split("").map((char) => char.charCodeAt(0)))
-  );
-};
 export default ArticlesList;
