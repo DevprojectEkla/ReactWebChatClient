@@ -20,6 +20,7 @@ const DynamicImageComponent = ({ article }) => {
     // logger.debug(blob);
     // Create a data URL for the Blob
     const dataURL = URL.createObjectURL(blob);
+    article.imageSrc = dataURL;
     setSrcImg(dataURL);
   };
   useEffect(() => {
@@ -29,7 +30,7 @@ const DynamicImageComponent = ({ article }) => {
   }, [article]);
   return (
     <ImageContainer>
-      {srcImg ? (
+      {article.imageSrc ? (
         <StyledImage src={srcImg} alt={article.title} />
       ) : (
         <div>
