@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { apiBaseUrl, MUTLIPART_BOUNDARY} from './config';
 
+export const validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+    };
 
 export const login = async (email,password) => {
 let data = {

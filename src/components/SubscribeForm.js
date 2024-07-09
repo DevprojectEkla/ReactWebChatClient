@@ -13,7 +13,7 @@ import {
 } from "../styles/FormStyles";
 
 import { useState } from "react";
-import { binaryStringToBytesArray, setSrcImg } from "../utils";
+import { binaryStringToBytesArray, setSrcImg,validateEmail } from "../utils";
 import { MyButton } from "./Button";
 import DynamicImageComponent from "./DynamicImageComponent";
 
@@ -36,7 +36,7 @@ const SubscribeForm = ({ onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!email) {
+    if (!validateEmail(email)) {
       setEmailError("a valid email is required");
     }
     if (!username) {

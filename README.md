@@ -1,6 +1,6 @@
 # React Client Application with WebRTC, WebSocket and Node.js Backend Integration
 
-This React application serves as the client for the Node.js backend server. It is designed to facilitate WebRTC for video streaming and utilizes WebSocket (via Socket.io) for real-time communication. The application provides a chat room where users can exchange basic text messages and turn on their webcams for video conferencing. Although some features, like the forum, are still under development, the core functionalities are in place.
+This React application serves as the client for my Node.js backend server [NodeReactPlatform](https://github.com/DevprojectEkla/NodeReactPlatform). It is designed to facilitate WebRTC for video streaming and utilizes WebSocket (via Socket.io) for real-time communication. The application provides a chat room where users can exchange basic text messages and turn on their webcams for video conferencing. Although some features, like the forum, are still under development, the core functionalities are in place.
 
 The application can be served by the Node.js backend server or run independently using the `npm start` command provided by Create React App.
 
@@ -21,4 +21,8 @@ The application can be run in two ways:
 To run the application in development mode:
 ```bash
 npm start
+
+
+## GitHub Project
+For more details, visit the .
 

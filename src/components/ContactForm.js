@@ -16,6 +16,7 @@ import {
 
 import { useState } from "react";
 import {
+    validateEmail,
   binaryStringToBytesArray,
   headers,
   setRequest,
@@ -42,8 +43,8 @@ const ContactForm = ({ onSubmit }) => {
     if (!mailTo) {
       setMailToError("A valid email is required");
     }
-    if (!mailFrom) {
-      setMailFromError("A name or at least a pseudo is required");
+    if (!validateEmail(mailFrom)) {
+      setMailFromError("A valid email is required");
       return;
     }
 
@@ -53,7 +54,7 @@ const ContactForm = ({ onSubmit }) => {
     }
 
     // Assuming onSubmit is a function passed as a prop to handle form submission
-    onSubmit({ mailFrom, message });
+    onSubmit({ mailTo, mailFrom, subject, message });
   };
   const handleMailToChanged = (e) => {
     setMailTo(e.target.value);

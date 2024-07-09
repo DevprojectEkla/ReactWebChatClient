@@ -24,8 +24,8 @@ const ContactPage = () => {
       try{
     console.warn("Creating FormData")
         const mail = new FormData();
-        mail.append("username", formData.username)
-        mail.append("email", formData.email)
+        mail.append("mailFrom", formData.mailFrom)
+        mail.append("subject", formData.subject)
         mail.append("message", formData.message)
         console.log("formed mail data to send:",mail)
         const type = headers.multipart
@@ -35,7 +35,6 @@ const ContactPage = () => {
                 apiBaseUrl + '/api/sendMail',
                 request)
         if (response.ok) {
-                // Handle successful article creation
         logger.debug("mail sent successfully");
 
         setSuccess(true);
@@ -43,7 +42,7 @@ const ContactPage = () => {
         configurePopup(
           true,
           "success",
-            `Your mail has been sent to: '${formData.email}'`
+            `Your mail has been sent to: '${formData.mailTo}'`
         );
       } else {
         // Handle error
