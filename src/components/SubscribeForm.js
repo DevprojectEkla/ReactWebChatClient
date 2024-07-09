@@ -1,5 +1,5 @@
 import {
-    BrowseButton,
+  BrowseButton,
   FormContainer,
   H1,
   InputLabelContainer,
@@ -13,9 +13,9 @@ import {
 } from "../styles/FormStyles";
 
 import { useState } from "react";
-import { binaryStringToBytesArray, setSrcImg,validateEmail } from "../utils";
+import { binaryStringToBytesArray, setSrcImg, validateEmail } from "../utils";
 import { MyButton } from "./Button";
-import DynamicImageComponent from "./DynamicImageComponent";
+import { DynamicImageComponent } from "./DynamicImageComponent";
 
 const SubscribeForm = ({ onSubmit }) => {
   const [username, setUserName] = useState("");
@@ -167,7 +167,8 @@ const SubscribeForm = ({ onSubmit }) => {
               type="file"
               onInput={handleFileChange}
               accept="image/*"
-            /><BrowseButton htmlFor="file">Parcourir</BrowseButton>
+            />
+            <BrowseButton htmlFor="file">Parcourir</BrowseButton>
           </Label>
         </InputLabelContainer>
 

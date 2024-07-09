@@ -15,16 +15,7 @@ import {
 } from "../styles/FormStyles";
 
 import { useState } from "react";
-import {
-    validateEmail,
-  binaryStringToBytesArray,
-  headers,
-  setRequest,
-  setSrcImg,
-} from "../utils";
-import { MyButton } from "./Button";
-import DynamicImageComponent from "./DynamicImageComponent";
-import { apiBaseUrl } from "../config";
+import { validateEmail } from "../utils";
 
 const ContactForm = ({ onSubmit }) => {
   const [mailFrom, setMailFrom] = useState("");
@@ -75,7 +66,7 @@ const ContactForm = ({ onSubmit }) => {
       setMailFromError("");
     }
   };
-    const handleSubjectChanged = (e) => {
+  const handleSubjectChanged = (e) => {
     setSubject(e.target.value);
 
     if (e.target.value.length > 100) {
@@ -124,7 +115,7 @@ const ContactForm = ({ onSubmit }) => {
       <form encType="application/json" onSubmit={handleSubmit}>
         <InputLabelContainer>
           <Label>
-      From: 
+            From:
             <Input
               type="text"
               value={mailFrom}
@@ -135,7 +126,6 @@ const ContactForm = ({ onSubmit }) => {
           </Label>
         </InputLabelContainer>
 
-      
         <InputLabelContainer>
           <Label>
             To:
@@ -148,9 +138,9 @@ const ContactForm = ({ onSubmit }) => {
             {mailToError && <ErrorMessage>{mailToError}</ErrorMessage>}
           </Label>
         </InputLabelContainer>
-<InputLabelContainer>
+        <InputLabelContainer>
           <Label>
-      Subject: 
+            Subject:
             <Input
               type="text"
               value={subject}
@@ -160,8 +150,6 @@ const ContactForm = ({ onSubmit }) => {
             {subjectError && <ErrorMessage>{subjectError}</ErrorMessage>}
           </Label>
         </InputLabelContainer>
-
-
 
         <InputLabelContainer>
           <Label>

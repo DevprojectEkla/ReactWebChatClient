@@ -5,7 +5,15 @@ import { apiBaseUrl, THEME_COLOR } from "../config";
 import { logger } from "../utils/logger";
 
 // Use the styled components in your React component
-const DynamicImageComponent = ({ article }) => {
+export const DynamicImageComponent = ({ src, alt }) => {
+  return (
+    <ImageContainer>
+      <StyledImage src={src} alt={alt} />
+    </ImageContainer>
+  );
+};
+
+export const DynamicArticleImageComponent = ({ article }) => {
   const [srcImg, setSrcImg] = useState([]);
   const fetchImages = async (article) => {
     // article is an object containing the image data
@@ -30,7 +38,7 @@ const DynamicImageComponent = ({ article }) => {
   }, [article]);
   return (
     <ImageContainer>
-      {article.imageSrc ? (
+      {article && article.imageSrc ? (
         <StyledImage src={article.imageSrc} alt={article.title} />
       ) : (
         <div>
@@ -41,5 +49,3 @@ const DynamicImageComponent = ({ article }) => {
     </ImageContainer>
   );
 };
-
-export default DynamicImageComponent;

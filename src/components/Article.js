@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useHeaderContext } from "../contexts/HeaderContext";
 import { useScrollToTopContext } from "../contexts/ScrollToTop";
-import DynamicImageComponent from "./DynamicImageComponent";
+import { DynamicArticleImageComponent } from "./DynamicImageComponent";
 import { MyButton } from "./Button";
 import { Link, useParams } from "react-router-dom";
 import { apiBaseUrl } from "../config";
@@ -50,9 +50,9 @@ const Article = ({ article, index }) => {
             <h1>{article.title}</h1>
           </div>
           <div>
-            <DynamicImageComponent
-             article={article} 
-            ></DynamicImageComponent>
+            <DynamicArticleImageComponent
+              article={article}
+            ></DynamicArticleImageComponent>
           </div>
           <div className="articleContent">
             {

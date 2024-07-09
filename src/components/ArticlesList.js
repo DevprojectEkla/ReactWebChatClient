@@ -4,7 +4,7 @@ import { logger } from "../utils/logger";
 import { Link } from "react-router-dom";
 import { CustomButton } from "./Button";
 import { ListArticleContainer } from "../styles/ArticlesStyles";
-import DynamicImageComponent from "./DynamicImageComponent";
+import { DynamicArticleImageComponent } from "./DynamicImageComponent";
 import { useScrollToTopContext } from "../contexts/ScrollToTop";
 import Spinner from "./Spinner";
 import { ClipLoader } from "react-spinners";
@@ -80,7 +80,7 @@ const ArticlesList = () => {
     return articles.map((article, index) => (
       <div key={index}>
         <h3>{article.title}</h3>
-        <DynamicImageComponent
+        <DynamicArticleImageComponent
           // src={article.imageSrc}
           article={article}
         />
