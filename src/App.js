@@ -16,6 +16,7 @@ import CreateAccountPage from "./pages/CreateAccountPage";
 import UpdateArticlePage from "./pages/UpdateArticlePage";
 import { MainContent, StyledGlobal } from "./styles/BodyStyles";
 import ContactPage from "./pages/ContactPage";
+import NotFound from "./components/NotFound";
 
 const StyledApp = styled.div`
   display: flex;
@@ -55,7 +56,8 @@ function App() {
               />
               <Route path={"chatRoom/"} element={<ChatRoom />}/>
               <Route path={"Contact/"} element={<ContactPage />}/>
-              <Route path={"*"} element={<ContactPage />}/>
+              <Route path={"*"} element={<NotFound/>}/>
+
             </Routes>
           </MainContent>
           <Footer />
