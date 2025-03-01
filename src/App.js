@@ -57,6 +57,7 @@ function App() {
               <Route path={"chatRoom/"} element={<ChatRoom />}/>
               <Route path={"Contact/"} element={<ContactPage />}/>
               <Route path={"*"} element={<NotFound/>}/>
+
             </Routes>
           </MainContent>
           <Footer />
