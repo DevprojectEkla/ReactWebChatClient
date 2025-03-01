@@ -18,7 +18,7 @@ export const DynamicArticleImageComponent = ({ article }) => {
     // article is an object containing the image data
     const id = await article._id;
     // console.warn("ID of the article", id);
-    const res = await fetch(apiBaseUrl + "api/articleImage/" + id);
+    const res = await fetch(apiBaseUrl + "/api/articleImage/" + id);
     const data = await res.json();
     const base64Response = await fetch(
       `data:${data.file.mimeType};base64,${data.file.content}`

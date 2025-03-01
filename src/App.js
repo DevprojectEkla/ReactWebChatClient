@@ -36,25 +36,26 @@ function App() {
           <Header />
           <MainContent>
             <Routes>
-              <Route path={"/"} exact element={<Body />}></Route>
-              <Route path={"login"} element={<Login />}></Route>
-              <Route path={"subscribe"} element={<CreateAccountPage />}></Route>
+              <Route path={"/"} exact element={<Body />}/>
+              <Route path={"login"} element={<Login />}/>
+              <Route path={"subscribe"} element={<CreateAccountPage />}/>
               <Route
                 path={"articles/create"}
                 element={<CreateArticlePage />}
-              ></Route>
+              />
               <Route
                 path={"articles/update/:id"}
                 element={<UpdateArticlePage />}
-              ></Route>
+              />
 
-              <Route path={"articles"} element={<ArticlesPage />}></Route>
+              <Route path={"articles"} element={<ArticlesPage />}/>
               <Route
                 path={"articles/detail/:id"}
                 element={<SingleArticlePage />}
-              ></Route>
-              <Route path={"chatRoom/"} element={<ChatRoom />}></Route>
-              <Route path={"Contact/"} element={<ContactPage />}></Route>
+              />
+              <Route path={"chatRoom/"} element={<ChatRoom />}/>
+              <Route path={"Contact/"} element={<ContactPage />}/>
+              <Route path={"*"} element={<ContactPage />}/>
             </Routes>
           </MainContent>
           <Footer />
