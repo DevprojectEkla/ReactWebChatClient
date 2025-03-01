@@ -9,7 +9,7 @@ import ChatRoom from "./components/ChatRoom";
 import Login from "./components/Login";
 import SingleArticlePage from "./pages/SingleArticlePage";
 import { HeaderProvider } from "./contexts/HeaderContext";
-import { useScrollToTopContext } from "./contexts/ScrollToTop";
+// import { useScrollToTopContext } from "./contexts/ScrollToTop";
 import { HelmetProvider } from "react-helmet-async";
 import CreateArticlePage from "./pages/CreateArticlePage";
 import CreateAccountPage from "./pages/CreateAccountPage";
@@ -18,14 +18,14 @@ import { MainContent, StyledGlobal } from "./styles/BodyStyles";
 import ContactPage from "./pages/ContactPage";
 import NotFound from "./components/NotFound";
 
-const StyledApp = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: auto;
-`;
+// const StyledApp = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   margin: auto;
+// `;
 
 function App() {
-  const scrollPosition = useScrollToTopContext();
+  // const scrollPosition = useScrollToTopContext();
   // console.log("rerender")
 
   return (

@@ -4,7 +4,7 @@ import { logger } from "../utils/logger";
 import { Link } from "react-router-dom";
 import { CustomButton } from "./Button";
 import { ListArticleContainer } from "../styles/ArticlesStyles";
-import { DynamicArticleImageComponent } from "./DynamicImageComponent";
+import { DynamicItemImageComponent } from "./DynamicImageComponent";
 import { ClipLoader } from "react-spinners";
 import { getCookie } from "../utils/cookieUtils";
 
@@ -74,7 +74,7 @@ const ArticlesList = () => {
     return articles.map((article, index) => (
       <div key={index}>
         <h3>{article.title}</h3>
-        <DynamicArticleImageComponent article={article} />
+        <DynamicItemImageComponent apiUrl={`${apiBaseUrl}/api/articleImage/${article._id}`} />
 
         <CustomButton>
           <Link
