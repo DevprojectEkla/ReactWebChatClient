@@ -3,7 +3,7 @@ name: Trigger Build on Linode via WebHook
 on:
   push:
     branches:
-      - main  # Adjust this to your branch name
+      - main 
 
 jobs:
   deploy:
@@ -13,6 +13,73 @@ jobs:
         run: |
           curl -X POST \
             -H "Accept: application/vnd.github.everest-preview+json" \
-            -H "Authorization: token ${{ secrets.GH_PAT_CLIENT_HOOK}}" \
+            -H "Authorization: token ${{ secrets.GH_PATH_CLIENT_HOOK}}" \
             https://api.github.com/repos/devprojectekla/NodeReactPlatform/dispatches \
             -d '{"event_type":"client-update"}'
+      - name: Wait for the triggered deployment to be available
+        run: |
+          # Wait a bit to ensure the triggered deployment has time to start
+          echo "Waiting for the deployment to start..."
+          sleep 15  # Adjust the sleep time if needed
+
+      - name: Fetch Latest Deployment Run ID
+        run: |
+          RUN_ID=$(curl -H "Authorization: token ${{ secrets.GH_PATH_CLIENT_HOOK }}" \
+              "https://api.github.com/repos/devprojectekla/NodeReactPlatform/actions/workflows/deploy.yml/runs" | \
+              jq '.workflow_runs[0].id')
+
+          echo "Deployment run ID is $RUN_ID"
+          
+          STATUS="queued"
+          MAX_ATTEMPTS=30  # Max attempts to check the status
+          ATTEMPT=0
+
+          echo "Using RUN_ID: $RUN_ID"
+          
+          # Loop to check the status with a delay
+          while [[ "$STATUS" != "completed" && $ATTEMPT -lt $MAX_ATTEMPTS ]]; do
+            # Fetch the status and conclusion of the deployment run
+            RUN_STATUS=$(curl -H "Authorization: token ${{ secrets.GH_PATH_CLIENT_HOOK }}" \
+                "https://api.github.com/repos/devprojectekla/NodeReactPlatform/actions/runs/$RUN_ID" | \
+                jq -r '.status')
+            RUN_CONCLUSION=$(curl -H "Authorization: token ${{ secrets.GH_PATH_CLIENT_HOOK }}" \
+                "https://api.github.com/repos/devprojectekla/NodeReactPlatform/actions/runs/$RUN_ID" | \
+                jq -r '.conclusion')
+            
+            echo "Attempt $((ATTEMPT+1)): Current status is $RUN_STATUS and conclusion is $RUN_CONCLUSION"
+
+            # Check if the workflow is completed
+            if [[ "$RUN_STATUS" == "completed" ]]; then
+              # Exit loop if deployment is completed
+              if [[ "$RUN_CONCLUSION" == "success" ]]; then
+                echo "Deployment succeeded."
+                DEPLOY_STATUS="success"
+                break
+              elif [[ "$RUN_CONCLUSION" == "failure" ]]; then
+                echo "Deployment failed."
+                DEPLOY_STATUS="failure"
+                break
+              fi
+            fi
+
+            # Sleep for 15 seconds before checking again
+            sleep 15
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+
+          # After the loop ends, check if the deployment is successful or not
+          if [[ "$DEPLOY_STATUS" != "success" ]]; then
+            echo "Deployment failed or timeout reached, updating commit status as failure."
+            DEPLOY_STATUS="failure"
+          fi
+
+      - name: Update commit status based on deployment success
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GH_PATH_CLIENT_HOOK }}" \
+            -d '{
+              "state": "'"${DEPLOY_STATUS}"'",
+              "description": "Deployment completed successfully.",
+              "context": "deployment"
+            }' \
+            "https://api.github.com/repos/devprojectekla/NodeReactPlatform/statuses/${GITHUB_SHA}"
