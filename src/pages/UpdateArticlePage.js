@@ -4,6 +4,7 @@ import ArticleForm from "../components/ArticleForm";
 import PopUp from "../components/PopUp";
 import { apiBaseUrl, MUTLIPART_BOUNDARY } from "../config";
 import { useLocation, useNavigate } from "react-router-dom";
+import {getCookie} from "../utils/cookieUtils";
 
 const UpdateArticlePage = () => {
   const location = useLocation();
@@ -38,8 +39,8 @@ const UpdateArticlePage = () => {
       fileData.append("filename", formData.filename);
       fileData.append("type", formData.type);
       fileData.append("content", formData.content);
-
-      console.log("FILEDATA", fileData);
+const sessionData = await getCookie('session_data')
+      console.log("FILEDATA", fileData, sessionData);
       const response = await fetch(
         apiBaseUrl + `/api/articles/update/${article._id}`,
         {
@@ -47,7 +48,9 @@ const UpdateArticlePage = () => {
           body: fileData,
           headers: {
             "Content-Type": `multipart/form-data; boundary="${MUTLIPART_BOUNDARY}"`,
+              Cookie: `session_data=${sessionData}` 
           },
+            credentials: 'include' 
         }
       );
       // .then(response => response.json().then(data => console.log(data)).catch(error => console.error("Error: ",error)))

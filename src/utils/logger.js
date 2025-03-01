@@ -15,11 +15,20 @@ const printLogLevel = {
 
 } 
 
-let debug;
-const getDebugVar = await fetch(apiBaseUrl + '/api/debug').then(res => res.json()).then(data =>  debug = data)
-const currentLogLevel = debug 
-    === "True" ? logLevel.debug : logLevel.info;
-console.warn("DEBUG LEVEL:",printLogLevel[currentLogLevel])
+const getDebugVar = async () => {
+    const debug = sessionStorage.getItem("DEBUG_LEVEL");
+
+    return debug ? debug : 
+
+    await fetch(apiBaseUrl + '/api/debug')
+        .then(res => res.json())
+        .then(data =>  { 
+            sessionStorage.setItem("DEBUG_LEVEL",data);
+        })
+}
+
+const currentLogLevel = getDebugVar() ? logLevel.debug : logLevel.info;
+console.warn("DEBUG LEVEL:", printLogLevel[currentLogLevel])
 
 export const logger = {
  debug: (message, ...args) => log("debug", message, ...args),
@@ -41,7 +50,7 @@ export const log = (level, message, ...args) => {
     }
     switch (level) {
       case "debug":
-        console.debug(`[${level.toUpperCase()}] ${formattedMessage}`, ...args);
+        console.warn(`[${level.toUpperCase()}] ${formattedMessage}`, ...args);
         break;
       case "info":
         console.info(`[${level.toUpperCase()}] ${formattedMessage}`, ...args);
@@ -53,7 +62,7 @@ export const log = (level, message, ...args) => {
         console.error(`[${level.toUpperCase()}] ${formattedMessage}`, ...args);
         break;
       default:
-        console.debug(`[${level.toUpperCase()}] ${formattedMessage}`, ...args);
+        console.warn(`[${level.toUpperCase()}] ${formattedMessage}`, ...args);
     }
   }
 };

@@ -98,6 +98,8 @@ window.location.href =  redirectUri
             className="inputBox"
             value={email}
             placeholder="enter your username or email"
+            autoComplete="username"
+
             onChange={(ev) => setEmail(ev.target.value)}
           />
           </Label>
@@ -108,6 +110,7 @@ window.location.href =  redirectUri
             className="inputBox"
             value={password}
             placeholder="enter your password"
+            autoComplete="current-password"
             onChange={(ev) => setPassword(ev.target.value)}
                 />
           </Label>
