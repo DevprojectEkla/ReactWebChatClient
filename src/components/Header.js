@@ -5,9 +5,7 @@ import Chip from '@mui/material/Chip';
 
 import Breadcrumbs from "@mui/material/Breadcrumbs"
 import HomeIcon from '@mui/icons-material/Home';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
-import { THEME_COLOR,apiBaseUrl,isDevelopment } from "../config";
+import { AVATAR_CACHE_KEY, THEME_COLOR,apiBaseUrl,isDevelopment } from "../config";
 import { useHeaderContext } from "../contexts/HeaderContext";
 import { useScrollToTopContext } from "../contexts/ScrollToTop";
 import { setSrcImg } from "../utils";
@@ -33,7 +31,6 @@ import {
   createCookie,
   generateDefaultSessionData,
   getCookie,
-  getUserName,
 } from "../utils/cookieUtils";
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor = THEME_COLOR
@@ -121,7 +118,16 @@ useEffect(() => {
     const sessionData = await getCookie("session_data");
       logger.debug(sessionData)
         const avatarHash = sessionData.avatar.name;
- const response = await fetch(apiBaseUrl + `/api/avatars/${avatarHash}`, {
+
+   const cachedAvatar = sessionStorage.getItem(`${AVATAR_CACHE_KEY}_${avatarHash}`);
+
+    if (cachedAvatar) {
+        console.debug("Using cached avatar");
+        setAvatar(cachedAvatar);
+        return;
+    }
+      try {
+  const response = await fetch(apiBaseUrl + `/api/avatars/${avatarHash}`, {
       method: "GET",
       headers: {
         "Content-type": "application/json",
@@ -134,8 +140,15 @@ useEffect(() => {
     const data = await response.json();
     // logger.debug("data avatar:", data);
     const urlImg = setSrcImg(data.data);
+          sessionStorage.setItem(`${AVATAR_CACHE_KEY}_${avatarHash}`, urlImg)
+          
     setAvatar(urlImg);
 
+         
+      } catch (error) {
+          
+          console.error("Error fetching avatar:", error)
+      }
 
     
         };

@@ -19,7 +19,8 @@ const HOVER_BACKGROUND_COLOR = "rgb(255,250,255,.7)";
 const HOVER_EFFECT = (end_color,text_color="inherit") => {return `&:hover {color:${text_color};
     background-color: ${end_color};
 transition: background-color 0.3s ease,color 0.3s ease,border-color 0.3s ease;`}
-
+const AVATAR_CACHE_KEY= "avatar_cache"
+const ARTICLE_IMG_CACHE_KEY= "article_image_cache"
 const FAILURE_COLOR='#e74c3c'
 const SUCCESS_COLOR = "rgba(192, 130,140,0.8)";
 const MUTLIPART_BOUNDARY =
@@ -36,7 +37,10 @@ module.exports = {
   DESCRIPTION,
   CONCEPTEUR,
   apiBaseUrl,
-  isDevelopment,
+  isDevelopment, 
+    AVATAR_CACHE_KEY,
+    ARTICLE_IMG_CACHE_KEY,
+    HOVER_BACKGROUND_COLOR,
   APP_TITLE,
   SUB_TITLE,
   THEME_COLOR,

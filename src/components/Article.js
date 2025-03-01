@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useHeaderContext } from "../contexts/HeaderContext";
-import { DynamicArticleImageComponent } from "./DynamicImageComponent";
+import { DynamicItemImageComponent
+} from "./DynamicImageComponent";
 import { MyButton } from "./Button";
 import { Link } from "react-router-dom";
 import { apiBaseUrl } from "../config";
@@ -42,9 +43,9 @@ const Article = ({ article, index }) => {
             <h1>{article.title}</h1>
           </div>
           <div>
-            <DynamicArticleImageComponent
-              article={article}
-            ></DynamicArticleImageComponent>
+            <DynamicItemImageComponent
+                apiUrl= {`${apiBaseUrl}/api/articleImage/${article._id}`
+}            ></DynamicItemImageComponent>
           </div>
           <div className="articleContent">
             {
