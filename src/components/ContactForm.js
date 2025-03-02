@@ -12,7 +12,7 @@ import {
 } from "../styles/FormStyles";
 
 import { useState } from "react";
-import { validateEmail } from "../utils";
+import { validateEmail } from "../utils/helpers";
 
 const ContactForm = ({ onSubmit }) => {
   const [mailFrom, setMailFrom] = useState("");
