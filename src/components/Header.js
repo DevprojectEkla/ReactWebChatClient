@@ -8,7 +8,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { AVATAR_CACHE_KEY, THEME_COLOR,apiBaseUrl,isDevelopment } from "../config";
 import { useHeaderContext } from "../contexts/HeaderContext";
 import { useScrollToTopContext } from "../contexts/ScrollToTop";
-import { setSrcImg } from "../utils";
+import { setSrcImg } from "../utils/helpers";
 import { logger } from "../utils/logger"
 import   Button  from "@mui/material/Button";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';

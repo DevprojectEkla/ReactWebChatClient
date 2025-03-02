@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import SubscribeForm from '../components/SubscribeForm';
 import PopUp from '../components/PopUp'
 import{ apiBaseUrl,MUTLIPART_BOUNDARY } from '../config'
-import {login, usePopup} from '../utils';
+import {login, usePopup} from '../utils/helpers';
 import {useNavigate} from 'react-router-dom';
 
 const CreateAccountPage = () => {

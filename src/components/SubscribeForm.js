@@ -9,11 +9,10 @@ import {
   FileInput,
   SubmitForm,
   ErrorMessage,
-  SuccessMessage,
 } from "../styles/FormStyles";
 
 import { useState } from "react";
-import { binaryStringToBytesArray, setSrcImg, validateEmail } from "../utils";
+import { binaryStringToBytesArray, setSrcImg, validateEmail } from "../utils/helpers";
 import { MyButton } from "./Button";
 import { DynamicImageComponent } from "./DynamicImageComponent";
 
