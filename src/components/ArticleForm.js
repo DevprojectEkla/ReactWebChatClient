@@ -8,9 +8,13 @@ import {
   Input,
   TextArea,
   FileInput,
+  SubmitForm,
+  ErrorMessage,
+  SuccessMessage,
 } from '../styles/FormStyles';
 import { useState, useCallback, useEffect } from 'react';
 import { binaryStringToBytesArray } from '../utils';
+import { Link } from 'react-router-dom';
 import { MyButton } from './Button';
 import { logger } from '../utils/logger';
 import {
@@ -133,29 +137,24 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
       // logger.debug('filename',fileInput.name)
       // logger.debug('type',fileInput.type)
       // logger.debug("Input File",fileInput)
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const fileContent = event.target.result;
-        logger.debug(fileContent);
-        // const trick = await fetch(`data:${type};base64,${fileContent}`)
-        // const blob = await trick.blob()
-        // const imgUrl = URL.createObjectURL(blob)
-        setSrcImg(fileContent);
-        logger.debug('file content on input change:', fileContent);
+      // Lire en DataURL pour l'aperçu
+      const readerPreview = new FileReader();
+      readerPreview.onload = (e) => setSrcImg(e.target.result);
+      readerPreview.readAsDataURL(fileInput);
 
-        // logger.debug("File Content",fileContent)
-        // let decodedContent = decoder.decode(fileContent);
-        // let        encoder = new TextEncoder()
-        // let        encoded =encoder.encode(fileContent)
+      const readerBinary = new FileReader();
+      readerBinary.onload = (e) => {
+        const fileContent = e.target.result;
+
         let encoded = btoa(fileContent);
         logger.debug('file content before encoding', fileContent);
         logger.debug('encoded data', encoded);
         setContent(encoded);
-
         setRawData(binaryStringToBytesArray(fileContent));
-        logger.debug('rawData:', rawData);
       };
-      reader.readAsDataURL(fileInput);
+      readerBinary.readAsBinaryString(fileInput);
+
+      logger.debug('rawData:', rawData);
     },
     [rawData],
   );
@@ -235,6 +234,7 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
               <Label>Image actuelle :</Label>
               <DynamicItemImageComponent
                 apiUrl={`${apiBaseUrl}/api/articleImage/${article._id}`}
+                setContent={setContent}
               />
             </>
           )}
