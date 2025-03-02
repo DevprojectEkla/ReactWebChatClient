@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import ContactForm from "../components/ContactForm";
 import PopUp from "../components/PopUp";
-import { usePopup,headers, setRequest } from "../utils";
-import { apiBaseUrl, MUTLIPART_BOUNDARY } from "../config";
+import { usePopup,headers, setRequest } from "../utils/helpers";
+import { apiBaseUrl } from "../config";
 import { useNavigate } from "react-router-dom";
 import { logger } from '../utils/logger'
 

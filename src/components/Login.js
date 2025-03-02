@@ -8,8 +8,6 @@ import {FormContainer,H1,
     SubLink,
   Label,
   Input,
-  TextArea,
-  FileInput,
 GoogleLoginButton} from "../styles/FormStyles";
 import { logger } from "../utils/logger"
 const Login = () => {
@@ -85,7 +83,7 @@ window.location.href =  redirectUri
   };
 
   return (
-        <FormContainer onKeyPress={(ev) => ev.key === 'Enter' && onClick()}
+        <FormContainer onKeyDown={(e) => e.key === 'Enter' && onClick()}
 >
       <H1>Login</H1>
       <GoogleLoginButton onClick={googleAuthCallBack}>Se connecter avec Google</GoogleLoginButton>
