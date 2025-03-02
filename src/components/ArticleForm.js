@@ -8,9 +8,13 @@ import {
   Input,
   TextArea,
   FileInput,
+  SubmitForm,
+  ErrorMessage,
+  SuccessMessage,
 } from '../styles/FormStyles';
 import { useState, useCallback, useEffect } from 'react';
 import { binaryStringToBytesArray } from '../utils';
+import { Link } from 'react-router-dom';
 import { MyButton } from './Button';
 import { logger } from '../utils/logger';
 import {
@@ -77,7 +81,6 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
           }
         }
       }
-      // logger.debug("content in useEffect",String.fromCharCode(...article.file.content.data))
       setFile(article.file);
       setIsSet(true);
     }
@@ -122,7 +125,6 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
       setTitleError('');
     }
   };
-  // let decoder = new TextDecoder("utf-8");
   const handleFileChange = useCallback(
     (e) => {
       const fileInput = e.target.files[0];
@@ -130,23 +132,19 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
       setFile(fileInput);
       setFileName(fileInput.name);
       setType(fileInput.type);
-      // logger.debug('filename',fileInput.name)
-      // logger.debug('type',fileInput.type)
-      // logger.debug("Input File",fileInput)
       const reader = new FileReader();
       reader.onload = (event) => {
         const fileContent = event.target.result;
-        logger.debug(fileContent);
-        // const trick = await fetch(`data:${type};base64,${fileContent}`)
-        // const blob = await trick.blob()
-        // const imgUrl = URL.createObjectURL(blob)
-        setSrcImg(fileContent);
-        logger.debug('file content on input change:', fileContent);
 
-        // logger.debug("File Content",fileContent)
-        // let decodedContent = decoder.decode(fileContent);
-        // let        encoder = new TextEncoder()
-        // let        encoded =encoder.encode(fileContent)
+        // Lire en DataURL pour la prévisualisation
+        const readerPreview = new FileReader();
+        readerPreview.onload = (e) => setSrcImg(e.target.result);
+        readerPreview.readAsDataURL(fileInput);
+
+        // Lire en BinaryString pour l'envoi en binary au serveur
+        const readerBinary = new FileReader();
+        readerBinary.readAsBinaryString(fileInput);
+        logger.debug(fileContent);
         let encoded = btoa(fileContent);
         logger.debug('file content before encoding', fileContent);
         logger.debug('encoded data', encoded);
@@ -155,7 +153,6 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
         setRawData(binaryStringToBytesArray(fileContent));
         logger.debug('rawData:', rawData);
       };
-      reader.readAsDataURL(fileInput);
     },
     [rawData],
   );
@@ -235,6 +232,7 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
               <Label>Image actuelle :</Label>
               <DynamicItemImageComponent
                 apiUrl={`${apiBaseUrl}/api/articleImage/${article._id}`}
+                setContent={setContent}
               />
             </>
           )}
