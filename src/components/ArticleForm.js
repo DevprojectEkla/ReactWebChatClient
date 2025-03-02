@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   BrowseButton,
   FormContainer,
@@ -8,42 +8,41 @@ import {
   Input,
   TextArea,
   FileInput,
-  SubmitForm,
-  ErrorMessage,
-  SuccessMessage,
-} from "../styles/FormStyles";
-import { useState,useCallback, useEffect } from "react";
-import { binaryStringToBytesArray  } from "../utils";
-import { Link } from "react-router-dom";
-import { MyButton } from "./Button";
-import { logger } from "../utils/logger";
-import { DynamicImageComponent, DynamicItemImageComponent } from "./DynamicImageComponent";
-import {apiBaseUrl} from "../config";
+} from '../styles/FormStyles';
+import { useState, useCallback, useEffect } from 'react';
+import { binaryStringToBytesArray } from '../utils';
+import { MyButton } from './Button';
+import { logger } from '../utils/logger';
+import {
+  DynamicImageComponent,
+  DynamicItemImageComponent,
+} from './DynamicImageComponent';
+import { apiBaseUrl } from '../config';
 
 const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
-  const [date, setDate] = useState("");
-  const [title, setTitle] = useState("");
+  const [date, setDate] = useState('');
+  const [title, setTitle] = useState('');
   const [fileInput, setFileInput] = useState(null);
   const [srcImg, setSrcImg] = useState(null);
   const [file, setFile] = useState(null);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   const [rawData, setRawData] = useState([]);
-  const [encodedData, setEncodedData] = useState("");
-  const [author, setAuthor] = useState("");
-  const [body, setBody] = useState("");
-  const [type, setType] = useState("");
-  const [filename, setFileName] = useState("");
+  const [encodedData, setEncodedData] = useState('');
+  const [author, setAuthor] = useState('');
+  const [body, setBody] = useState('');
+  const [type, setType] = useState('');
+  const [filename, setFileName] = useState('');
   const [isSet, setIsSet] = useState(false);
 
-  const [titleError, setTitleError] = useState("");
-  const [authorError, setAuthorError] = useState("");
-  const [dateError, setDateError] = useState("");
+  const [titleError, setTitleError] = useState('');
+  const [authorError, setAuthorError] = useState('');
+  const [dateError, setDateError] = useState('');
 
   useEffect(() => {
     if (article && !isSet) {
-        console.log(article)
+      console.log(article);
       const data = article.file.content.data;
-      logger.debug("data before converting to set content", data);
+      logger.debug('data before converting to set content', data);
       setRawData(data);
       setEncodedData(btoa(data));
 
@@ -58,24 +57,23 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
       if (article.file.content.data) {
         try {
           const charArray = Array.from(data, (byte) =>
-            String.fromCharCode(byte)
+            String.fromCharCode(byte),
           );
-          setContent(btoa(charArray.join("")));
+          setContent(btoa(charArray.join('')));
         } catch (error) {
-
           logger.debug(
             `cannot set content with this data: ${article.file.content.data}`,
-            error
+            error,
           );
 
           try {
             const toUint8Array = new Uint8Array(data);
-            logger.debug("content converted to uInt8:", toUint8Array);
+            logger.debug('content converted to uInt8:', toUint8Array);
             const convertedData = btoa(String.fromCharCode(...toUint8Array));
-            logger.debug("content set after trying btoa:", convertedData);
+            logger.debug('content set after trying btoa:', convertedData);
             setContent(convertedData);
           } catch (error) {
-            logger.debug("cannot convert this form of data", error);
+            logger.debug('cannot convert this form of data', error);
           }
         }
       }
@@ -103,12 +101,12 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
     e.preventDefault();
 
     if (!title) {
-      setTitleError("Title is required");
+      setTitleError('Title is required');
       return;
     }
 
     if (!author) {
-      setAuthorError("Author is required");
+      setAuthorError('Author is required');
       return;
     }
 
@@ -119,53 +117,56 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
     setTitle(e.target.value);
 
     if (e.target.value.length > 100) {
-      setTitleError("Title must not exceed 100 characters");
+      setTitleError('Title must not exceed 100 characters');
     } else {
-      setTitleError("");
+      setTitleError('');
     }
   };
   // let decoder = new TextDecoder("utf-8");
-  const handleFileChange = useCallback ((e) => {
-    const fileInput = e.target.files[0];
-    setFileInput(fileInput);
-    setFile(fileInput);
-    setFileName(fileInput.name);
-    setType(fileInput.type);
-    // logger.debug('filename',fileInput.name)
-    // logger.debug('type',fileInput.type)
-    // logger.debug("Input File",fileInput)
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const fileContent = event.target.result;
-        logger.debug(fileContent)
+  const handleFileChange = useCallback(
+    (e) => {
+      const fileInput = e.target.files[0];
+      setFileInput(fileInput);
+      setFile(fileInput);
+      setFileName(fileInput.name);
+      setType(fileInput.type);
+      // logger.debug('filename',fileInput.name)
+      // logger.debug('type',fileInput.type)
+      // logger.debug("Input File",fileInput)
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const fileContent = event.target.result;
+        logger.debug(fileContent);
         // const trick = await fetch(`data:${type};base64,${fileContent}`)
         // const blob = await trick.blob()
         // const imgUrl = URL.createObjectURL(blob)
-        setSrcImg(fileContent)
-      logger.debug("file content on input change:", fileContent);
+        setSrcImg(fileContent);
+        logger.debug('file content on input change:', fileContent);
 
-      // logger.debug("File Content",fileContent)
-      // let decodedContent = decoder.decode(fileContent);
-      // let        encoder = new TextEncoder()
-      // let        encoded =encoder.encode(fileContent)
-      let encoded = btoa(fileContent);
-      logger.debug("file content before encoding", fileContent);
-      logger.debug("encoded data", encoded);
-      setContent(encoded);
+        // logger.debug("File Content",fileContent)
+        // let decodedContent = decoder.decode(fileContent);
+        // let        encoder = new TextEncoder()
+        // let        encoded =encoder.encode(fileContent)
+        let encoded = btoa(fileContent);
+        logger.debug('file content before encoding', fileContent);
+        logger.debug('encoded data', encoded);
+        setContent(encoded);
 
-      setRawData(binaryStringToBytesArray(fileContent));
-      logger.debug("rawData:", rawData);
-    };
-        reader.readAsDataURL(fileInput)
-  }, [rawData]);
+        setRawData(binaryStringToBytesArray(fileContent));
+        logger.debug('rawData:', rawData);
+      };
+      reader.readAsDataURL(fileInput);
+    },
+    [rawData],
+  );
 
   const handleAuthorChange = (e) => {
     setAuthor(e.target.value);
 
     if (e.target.value.length > 50) {
-      setAuthorError("Author name must not exceed 50 characters");
+      setAuthorError('Author name must not exceed 50 characters');
     } else {
-      setAuthorError("");
+      setAuthorError('');
     }
   };
 
@@ -173,12 +174,12 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
     <FormContainer>
       <H1>{formTitle}</H1>
 
-      <form encType="application/json" onSubmit={handleSubmit}>
+      <form encType='application/json' onSubmit={handleSubmit}>
         <InputLabelContainer>
           <Label>
             Titre :
             <Input
-              type="text"
+              type='text'
               value={article?.title}
               onChange={handleTitleChange}
               onBlur={handleTitleChange}
@@ -190,7 +191,7 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
           <Label>
             Auteur:
             <Input
-              type="text"
+              type='text'
               value={article?.author}
               onChange={handleAuthorChange}
               onBlur={handleAuthorChange}
@@ -201,7 +202,10 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
         <InputLabelContainer>
           <Label>
             Corps de l'article:
-            <TextArea value={article?.body} onChange={(e) => setBody(e.target.value)} />
+            <TextArea
+              value={article?.body}
+              onChange={(e) => setBody(e.target.value)}
+            />
           </Label>
         </InputLabelContainer>
 
@@ -209,29 +213,34 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
           <Label>
             Sélectionnez une image pour l'article :
             <FileInput
-              id="file"
-              type="file"
+              id='file'
+              type='file'
               onInput={handleFileChange}
               name={filename}
-              accept="image/*"
+              accept='image/*'
             />
-            <BrowseButton htmlFor="file">Parcourir</BrowseButton>
+            <BrowseButton htmlFor='file'>Parcourir</BrowseButton>
           </Label>
         </InputLabelContainer>
 
         <InputLabelContainer>
-            {fileInput && (<><Label>Image sélectionnée :</Label>
-                <DynamicImageComponent src={srcImg} alt={article.file.filename}/>
-        </>)
-                }
-            {!fileInput && (<><Label>Image actuelle :</Label>
-            <DynamicItemImageComponent
-              apiUrl={`${apiBaseUrl}/api/articleImage/${article._id}`}
-            /></>
+          {fileInput && (
+            <>
+              <Label>Image sélectionnée :</Label>
+              <DynamicImageComponent src={srcImg} alt={article.file.filename} />
+            </>
+          )}
+          {!fileInput && (
+            <>
+              <Label>Image actuelle :</Label>
+              <DynamicItemImageComponent
+                apiUrl={`${apiBaseUrl}/api/articleImage/${article._id}`}
+              />
+            </>
           )}
         </InputLabelContainer>
 
-        <MyButton onClick={handleSubmit} type="submit">
+        <MyButton onClick={handleSubmit} type='submit'>
           {action}
         </MyButton>
       </form>

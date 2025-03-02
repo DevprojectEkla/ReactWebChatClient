@@ -11,8 +11,6 @@
   "endOfLine": "lf",
   "htmlWhitespaceSensitivity": "ignore",
   "quoteProps": "consistent",
-  "rangeStart": 0,
-  "rangeEnd": "Infinity",
   "embeddedLanguageFormatting": "auto",
   "jsxSingleQuote": true,
   "proseWrap": "always",
