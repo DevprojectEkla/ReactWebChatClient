@@ -24,8 +24,6 @@ import {
   HeaderContainer,
   Navbar,
   NavItem,
-  NavLink,
-  CustomBackButton,
 } from "../styles/HeaderStyles";
 import {
   createCookie,
@@ -99,57 +97,62 @@ useEffect(() => {
     setMenuVisible(!isMenuVisible);
   };
   
-  function getPageNameFromLocation(location, contextTitle) {
+function getPageNameFromLocation(location, contextTitle) {
     if (location.pathname.includes("articles/detail/")) {
-      return contextTitle;
+        return contextTitle;
     } else {
-      const urlPathParts = location.pathname.split("/");
-      const label = urlPathParts[urlPathParts.length - 1];
-      return label === "" ? "Accueil" : label;
+        const urlPathParts = location.pathname.split("/");
+        const label = urlPathParts[urlPathParts.length - 1];
+        return label === "" ? "Accueil" : label;
     }
-  }
-  const handleBackButtonClick = () => {
+}
+const handleBackButtonClick = () => {
     navigate(-1);
-  };
+};
 
-  const fetchAvatar = async (userData) => {
+const fetchAvatar = async (userData) => {
 
 
     const sessionData = await getCookie("session_data");
-      logger.debug(sessionData)
-        const avatarHash = sessionData.avatar.name;
+    logger.debug(sessionData)
+    const avatarHash = sessionData.avatar.name;
+    try {
+        const cachedAvatar = sessionStorage.getItem(`${AVATAR_CACHE_KEY}_${avatarHash}`);
+        if (cachedAvatar && cachedAvatar.size > 0)
+        {console.debug("Using cached avatar");
 
-   const cachedAvatar = sessionStorage.getItem(`${AVATAR_CACHE_KEY}_${avatarHash}`);
+            setAvatar(cachedAvatar);
+            return}
 
-    if (cachedAvatar) {
-        console.debug("Using cached avatar");
-        setAvatar(cachedAvatar);
-        return;
+    } catch (error) {
+        console.error("Cannot use cached data for user avatar", error)
+
     }
-      try {
-  const response = await fetch(apiBaseUrl + `/api/avatars/${avatarHash}`, {
-      method: "GET",
-      headers: {
-        "Content-type": "application/json",
-        Cookie: `session_data=${userData}`,
-      },
-     credentials: isDevelopment?'include':'same-origin'//this is cors related and is key to include cookies in request from different client servers (if the client is hosted on a different server than the backend), if the app uses a frontend and a backend server separately like in development of a react app
-    });
 
-    // logger.debug("avatar : ", response);
-    const data = await response.json();
-    // logger.debug("data avatar:", data);
-    const urlImg = setSrcImg(data.data);
-          sessionStorage.setItem(`${AVATAR_CACHE_KEY}_${avatarHash}`, urlImg)
-          
-    setAvatar(urlImg);
 
-         
-      } catch (error) {
-          
-          console.error("Error fetching avatar:", error)
-      }
+    try {
+        const response = await fetch(apiBaseUrl + `/api/avatars/${avatarHash}`, {
+            method: "GET",
+            headers: {
+                "Content-type": "application/json",
+                Cookie: `session_data=${userData}`,
+            },
+            credentials: isDevelopment?'include':'same-origin'//this is cors related and is key to include cookies in request from different client servers (if the client is hosted on a different server than the backend), if the app uses a frontend and a backend server separately like in development of a react app
+        });
 
+        // logger.debug("avatar : ", response);
+        const data = await response.json();
+        // logger.debug("data avatar:", data);
+        const urlImg = setSrcImg(data.data);
+        sessionStorage.setItem(`${AVATAR_CACHE_KEY}_${avatarHash}`, urlImg)
+
+        setAvatar(urlImg);
+
+
+    } catch (error) {
+
+        console.error("Error fetching avatar:", error)
+    }
     
         };
   const logout = async () => {

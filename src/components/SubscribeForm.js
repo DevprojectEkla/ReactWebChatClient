@@ -142,6 +142,7 @@ const SubscribeForm = ({ onSubmit }) => {
               type="password"
               value={password}
               onChange={handlePasswordChange}
+                autoComplete="new-password"
               onBlur={handlePasswordChange}
             />
             {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}

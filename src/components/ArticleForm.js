@@ -1,3 +1,4 @@
+import React from "react";
 import {
   BrowseButton,
   FormContainer,
@@ -11,17 +12,19 @@ import {
   ErrorMessage,
   SuccessMessage,
 } from "../styles/FormStyles";
-import { useState, useEffect } from "react";
-import { binaryStringToBytesArray, setSrcImg } from "../utils";
+import { useState,useCallback, useEffect } from "react";
+import { binaryStringToBytesArray  } from "../utils";
 import { Link } from "react-router-dom";
 import { MyButton } from "./Button";
 import { logger } from "../utils/logger";
-import { DynamicImageComponent } from "./DynamicImageComponent";
+import { DynamicImageComponent, DynamicItemImageComponent } from "./DynamicImageComponent";
+import {apiBaseUrl} from "../config";
 
 const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
   const [date, setDate] = useState("");
   const [title, setTitle] = useState("");
   const [fileInput, setFileInput] = useState(null);
+  const [srcImg, setSrcImg] = useState(null);
   const [file, setFile] = useState(null);
   const [content, setContent] = useState("");
   const [rawData, setRawData] = useState([]);
@@ -38,6 +41,7 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
 
   useEffect(() => {
     if (article && !isSet) {
+        console.log(article)
       const data = article.file.content.data;
       logger.debug("data before converting to set content", data);
       setRawData(data);
@@ -46,7 +50,6 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
       setTitle(article.title);
       setDate(article.date);
       setBody(article.body);
-      setFileInput(article.file);
       setFileName(article.file.fileName);
       setType(article.file.mimeType);
       setAuthor(article.author);
@@ -59,6 +62,7 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
           );
           setContent(btoa(charArray.join("")));
         } catch (error) {
+
           logger.debug(
             `cannot set content with this data: ${article.file.content.data}`,
             error
@@ -121,7 +125,7 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
     }
   };
   // let decoder = new TextDecoder("utf-8");
-  const handleFileChange = (e) => {
+  const handleFileChange = useCallback ((e) => {
     const fileInput = e.target.files[0];
     setFileInput(fileInput);
     setFile(fileInput);
@@ -133,6 +137,11 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
     const reader = new FileReader();
     reader.onload = (event) => {
       const fileContent = event.target.result;
+        logger.debug(fileContent)
+        // const trick = await fetch(`data:${type};base64,${fileContent}`)
+        // const blob = await trick.blob()
+        // const imgUrl = URL.createObjectURL(blob)
+        setSrcImg(fileContent)
       logger.debug("file content on input change:", fileContent);
 
       // logger.debug("File Content",fileContent)
@@ -147,8 +156,8 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
       setRawData(binaryStringToBytesArray(fileContent));
       logger.debug("rawData:", rawData);
     };
-    reader.readAsBinaryString(fileInput);
-  };
+        reader.readAsDataURL(fileInput)
+  }, [rawData]);
 
   const handleAuthorChange = (e) => {
     setAuthor(e.target.value);
@@ -170,7 +179,7 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
             Titre :
             <Input
               type="text"
-              value={title}
+              value={article?.title}
               onChange={handleTitleChange}
               onBlur={handleTitleChange}
             />
@@ -182,7 +191,7 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
             Auteur:
             <Input
               type="text"
-              value={author}
+              value={article?.author}
               onChange={handleAuthorChange}
               onBlur={handleAuthorChange}
             />
@@ -192,7 +201,7 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
         <InputLabelContainer>
           <Label>
             Corps de l'article:
-            <TextArea value={body} onChange={(e) => setBody(e.target.value)} />
+            <TextArea value={article?.body} onChange={(e) => setBody(e.target.value)} />
           </Label>
         </InputLabelContainer>
 
@@ -211,12 +220,14 @@ const ArticleForm = ({ formTitle, onSubmit, action, article }) => {
         </InputLabelContainer>
 
         <InputLabelContainer>
-          {fileInput && <Label>Image sélectionnée :</Label>}{" "}
-          {fileInput && (
-            <DynamicImageComponent
-              src={setSrcImg(rawData, type)}
-              alt={`uploaded: ${fileInput.title}`}
-            />
+            {fileInput && (<><Label>Image sélectionnée :</Label>
+                <DynamicImageComponent src={srcImg} alt={article.file.filename}/>
+        </>)
+                }
+            {!fileInput && (<><Label>Image actuelle :</Label>
+            <DynamicItemImageComponent
+              apiUrl={`${apiBaseUrl}/api/articleImage/${article._id}`}
+            /></>
           )}
         </InputLabelContainer>
 
