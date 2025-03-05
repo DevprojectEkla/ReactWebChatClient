@@ -146,7 +146,6 @@ const ArticleForm = ({ formTitle, action, article, configurePopup }) => {
 
                 let encoded = btoa(fileContent);
                 setContent(encoded);
-                setRawData(binaryStringToBytesArray(fileContent));
             };
             readerBinary.readAsBinaryString(fileInput);
         },

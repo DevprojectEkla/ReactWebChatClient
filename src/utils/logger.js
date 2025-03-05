@@ -27,7 +27,7 @@ const getDebugVar = async () => {
         })
 }
 
-const currentLogLevel = getDebugVar() ? logLevel.debug : logLevel.info;
+const currentLogLevel = logLevel[`${getDebugVar()}`];
 console.warn("DEBUG LEVEL:", printLogLevel[currentLogLevel])
 
 export const logger = {

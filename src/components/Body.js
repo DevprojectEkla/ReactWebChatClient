@@ -18,7 +18,7 @@ const Body = () => {
         <MyButton>
           <Link to="/articles">News</Link>
         </MyButton>
-        <MyButton onClick={clickCallBack}>Forum</MyButton>
+        <MyButton ><Link to="/bevy">Bevy Wasm</Link></MyButton>
         <MyButton>
           <Link to="/chatRoom">Chat</Link>
         </MyButton>
