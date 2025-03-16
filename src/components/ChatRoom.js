@@ -172,16 +172,16 @@ const ChatRoom = () => {
       <BottomContainer>
         <UserList users={users} />
       </BottomContainer>
-      <WebCamContainer>
         {socket ? (
+      <WebCamContainer>
           <WebCam
             socket={socket}
             newUser={newUserData}
           />
+      </WebCamContainer>
         ) : (
           <></>
         )}
-      </WebCamContainer>
 
       <ChatContainer ref={chatContainerRef}>
         <ChatHeader>Chat Room</ChatHeader>

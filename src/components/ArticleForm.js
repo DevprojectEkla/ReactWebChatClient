@@ -8,8 +8,7 @@ import {
 } from './DynamicImageComponent';
 import { apiBaseUrl } from '../config';
 import { getCookie } from '../utils/cookieUtils';
-import { logger } from '../utils/logger';
-import { binaryStringToBytesArray } from '../utils/helpers';
+import { scrollAndFocus } from '../utils/helpers';
 
 import {
     BrowseButton,
@@ -21,15 +20,15 @@ import {
     TextArea,
     FileInput,
 } from '../styles/FormStyles';
+import ButtonChoice from './ButtonChoice';
 
-const ArticleForm = ({ formTitle, action, article, configurePopup }) => {
+const ArticleForm = ({ formTitle, action, article, popUpConfig }) => {
     const [date, setDate] = useState('');
-    const [title, setTitle] = useState(article?.title);
+    const [title, setTitle] = useState(article?.title || '');
     const [fileInput, setFileInput] = useState(null);
     const [srcImg, setSrcImg] = useState(null);
     const [content, setContent] = useState('');
-    const [rawData, setRawData] = useState([]);
-    const [author, setAuthor] = useState(article?.author);
+    const [author, setAuthor] = useState(article?.author || '');
     const [body, setBody] = useState(article?.body);
     const [type, setType] = useState(article?.file?.mimeType);
     const [filename, setFileName] = useState(article?.file?.fileName);
@@ -43,19 +42,18 @@ const ArticleForm = ({ formTitle, action, article, configurePopup }) => {
 
     const formValidation = useCallback(() => {
         if (!title) {
-            titleRef.current.focus();
-            titleRef.current.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-            });
-            setTitleError('Title is required');
+            scrollAndFocus(titleRef);
+            setTitleError('Titre requis');
             return false;
         }
 
         if (!author) {
-            setAuthorError('Author is required');
+            scrollAndFocus(authorRef);
+            setAuthorError('Auteur requis');
             return false;
         }
+        setAuthorError('');
+        setTitleError('');
         return true;
     }, [title, author]);
 
@@ -67,12 +65,12 @@ const ArticleForm = ({ formTitle, action, article, configurePopup }) => {
         }
         return fileData;
     }, [title, author, filename, body, type, content]);
-   
+
     const fetcher = useCallback(
         async (payload, url, method, message) => {
             const sessionData = await getCookie('session_data');
             try {
-                const response = await fetch(url, {
+                const res = await fetch(url, {
                     method: method,
                     body: payload,
                     headers: {
@@ -80,30 +78,67 @@ const ArticleForm = ({ formTitle, action, article, configurePopup }) => {
                     },
                     credentials: 'include',
                 });
-                if (response.ok) {
-                   configurePopup(true, 'success', message);
+                if (res.ok) {
+                    popUpConfig(true, 'success', message);
                 } else {
-                   configurePopup(true, 'failure', response.error);
-                    console.error('Error creating article');
+                    switch (res.status) {
+                        case 401:
+                            popUpConfig(
+                                true,
+                                'failure',
+                                'Vous devez être authentifié pour avoir accès à cette fonctionnalité.',
+                            );
+
+                            break;
+                        case 404:
+                            popUpConfig(
+                                true,
+                                'failure',
+                                'Article not found in database',
+                            );
+
+                            break;
+
+                        case 500:
+                            popUpConfig(
+                                true,
+                                'failure',
+                                "Le serveur s'est crashé",
+                            );
+
+                            break;
+
+                        default:
+                            break;
+                    }
+                    console.error('Error editing article');
                 }
             } catch (error) {
-                   configurePopup(true, 'failure', error) 
+                popUpConfig(true, 'failure', error);
                 console.error('Network error:', error);
             }
         },
-        [configurePopup],
+        [popUpConfig],
     );
-     const create = useCallback(async (formData) => {
-        const apiUrl = apiBaseUrl + "/api/articles/create"
-   fetcher(formData, apiUrl, 'POST', 'Article created successfully') 
-    }, [fetcher]);
+    const create = useCallback(
+        async (formData) => {
+            const apiUrl = apiBaseUrl + '/api/articles/create';
+            fetcher(formData, apiUrl, 'POST', 'Article created successfully');
+        },
+        [fetcher],
+    );
     const update = useCallback(
-        async (fileData) => {
+        async (formData) => {
             const apiUrl = apiBaseUrl + `/api/articles/update/${article?._id}`;
-            fetcher(fileData, apiUrl, 'PUT', 'Article updated successfully');
+            fetcher(formData, apiUrl, 'PUT', 'Article updated successfully');
         },
         [fetcher, article?._id],
     );
+
+    const handleDelete = useCallback(() => {
+        const apiUrl = apiBaseUrl + `/api/articles/delete/${article?._id}`;
+        fetcher('', apiUrl, 'DELETE', 'Article deleted successfully');
+    }, [fetcher, article?._id]);
 
     const handleSubmit = useCallback(
         async (e) => {
@@ -115,7 +150,7 @@ const ArticleForm = ({ formTitle, action, article, configurePopup }) => {
             const fileData = buildFormData();
             if (!article) {
                 await create(fileData);
-                return
+                return;
             }
             await update(fileData);
         },
@@ -130,27 +165,24 @@ const ArticleForm = ({ formTitle, action, article, configurePopup }) => {
             setTitleError('');
         }
     }, []);
-    const handleFileChange = useCallback(
-        (e) => {
-            const fileInput = e.target.files[0];
-            setFileInput(fileInput);
-            setFileName(fileInput.name);
-            setType(fileInput.type);
-            const readerPreview = new FileReader();
-            readerPreview.onload = (e) => setSrcImg(e.target.result);
-            readerPreview.readAsDataURL(fileInput);
+    const handleFileChange = useCallback((e) => {
+        const fileInput = e.target.files[0];
+        setFileInput(fileInput);
+        setFileName(fileInput.name);
+        setType(fileInput.type);
+        const readerPreview = new FileReader();
+        readerPreview.onload = (e) => setSrcImg(e.target.result);
+        readerPreview.readAsDataURL(fileInput);
 
-            const readerBinary = new FileReader();
-            readerBinary.onload = (e) => {
-                const fileContent = e.target.result;
+        const readerBinary = new FileReader();
+        readerBinary.onload = (e) => {
+            const fileContent = e.target.result;
 
-                let encoded = btoa(fileContent);
-                setContent(encoded);
-            };
-            readerBinary.readAsBinaryString(fileInput);
-        },
-        [],
-    );
+            let encoded = btoa(fileContent);
+            setContent(encoded);
+        };
+        readerBinary.readAsBinaryString(fileInput);
+    }, []);
 
     const handleAuthorChange = (e) => {
         setAuthor(e.target.value);
@@ -173,7 +205,11 @@ const ArticleForm = ({ formTitle, action, article, configurePopup }) => {
                         <Input
                             ref={titleRef}
                             type='text'
-                            value={title || titleError}
+                            placeholder={
+                                titleError ? titleError : "Titre de l'article"
+                            }
+                            haserror={titleError}
+                            value={title}
                             onChange={handleTitleChange}
                         />
                     </Label>
@@ -185,6 +221,12 @@ const ArticleForm = ({ formTitle, action, article, configurePopup }) => {
                         <Input
                             ref={authorRef}
                             type='text'
+                            placeholder={
+                                authorError
+                                    ? authorError
+                                    : "Auteur de l'article"
+                            }
+                            haserror={authorError}
                             value={author}
                             onChange={handleAuthorChange}
                         />
@@ -238,9 +280,20 @@ const ArticleForm = ({ formTitle, action, article, configurePopup }) => {
                     )}
                 </InputLabelContainer>
 
-                <MyButton onClick={handleSubmit} type='submit'>
-                    {action}
-                </MyButton>
+                <MyButton
+                    label={action === 'edit' ? 'Éditer' : ' Créer'}
+                    onClick={handleSubmit}
+                    type='submit'
+                />
+                {action === 'edit' && (
+                    <ButtonChoice
+                        label={'Supprimer'}
+                        onClick={handleDelete}
+                        deleteItem={true}
+                        choice={true}
+                        type='submit'
+                    />
+                )}
             </form>
         </FormContainer>
     );

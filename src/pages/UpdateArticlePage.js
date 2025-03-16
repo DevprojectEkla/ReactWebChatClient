@@ -8,18 +8,19 @@ import init, { add, hello } from '../wasm/utils_wasm_lib';
 const UpdateArticlePage = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { article } = location.state || {};
+    const { memoizedArticle } = location.state || {};
     const runwasm = async () => {
         await init();
-        const message = hello('can you work please?')
-        const res = add(4+4)
-        console.log(res)
+        const message = hello('can you work please?');
+        const res = add(4 + 4);
+        console.log(res);
     };
     runwasm();
 
     const { isPopupOpen, popUpType, popUpMessage, configurePopup } = usePopup();
 
     const closePopup = () => {
+        configurePopup(false);
         if (popUpType === 'success') {
             navigate('/articles');
         }
@@ -27,12 +28,12 @@ const UpdateArticlePage = () => {
 
     return (
         <div>
-            <h1>Editer l'article</h1>
+            <h1>Éditer l'article</h1>
             <ArticleForm
-                article={article}
-                formTitle="Editer l'article"
-                configurePopup={configurePopup}
-                action='Editer'
+                article={memoizedArticle}
+                formTitle="Éditer l'article"
+                popUpConfig={configurePopup}
+                action='edit'
             />
             {isPopupOpen && (
                 <PopUp
