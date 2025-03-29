@@ -164,7 +164,6 @@ const WebCam = ({ socket }) => {
           ],
         };
         const pc = new RTCPeerConnection(configuration);
-        // const pc = new RTCPeerConnection();
         peerConnection.current = pc;
 
         peerConnections.current.set(socketId, pc);

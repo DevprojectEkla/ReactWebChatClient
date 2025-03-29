@@ -1,65 +1,128 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { io } from 'socket.io-client';
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { apiBaseUrl } from '../config';
+import { useSocketServer } from '../hooks/useSocketServer';
 
 const WebcamStream = () => {
     const videoRef = useRef(null);
     const socketRef = useRef(null);
     const peerConnectionRef = useRef(null);
+    const [turnConf, setTurnConf] = useState(null);
 
-    const turnConf = useMemo(async () => {
+    const getTurnConfig = useCallback(async () => {
         const response = await fetch(`${apiBaseUrl}/api/getTurnConfig`);
-        const data =  await response.json();
-    console.log(data);
+        const data = await response.json();
+        setTurnConf(data);
         return data;
     }, []);
-    
+
+    const { socket, currentUserData } = useSocketServer();
     useEffect(() => {
         // Initialize socket connection
-        socketRef.current = io(apiBaseUrl);
-
+        if (turnConf === null) {
+            getTurnConfig();
+        }
+        socketRef.current = socket;
         // WebRTC configuration
-        const configuration = {
-            iceServers: [{ urls: turnConf.urls }],
-        };
+        if (turnConf) {
+            const configuration = {
+                iceServers: [
+                    { urls: turnConf.urls.stun },
+                    {
+                        urls: turnConf.urls.turn_ssl,
+                        username: 'test',
+                        credential: '123456',
+                    },
 
-        peerConnectionRef.current = new RTCPeerConnection(configuration);
-
-        peerConnectionRef.current.ontrack = (event) => {
-            if (videoRef.current) {
-                videoRef.current.srcObject = event.streams[0];
+                    {
+                        urls: turnConf.urls.turn,
+                        username: 'test',
+                        credential: '123456',
+                    },
+                ],
+            };
+            if (!peerConnectionRef.current) {
+                peerConnectionRef.current = new RTCPeerConnection(
+                    configuration,
+                );
             }
-        };
-
-        peerConnectionRef.current.onicecandidate = (event) => {
-            if (event.candidate) {
-                socketRef.current.emit('server-ice-candidate', event.candidate);
+            if (peerConnectionRef.current) {
+                peerConnectionRef.current.oniceconnectionstatechange = () => {
+                    console.log(
+                        'ICE Connection State:',
+                        peerConnectionRef.current.iceConnectionState,
+                    );
+                };
+                console.log('hello pc', peerConnectionRef.current);
+                peerConnectionRef.current.ontrack = (event) => {
+                    if (videoRef.current) {
+                        videoRef.current.srcObject = event.streams[0];
+                    }
+                };
             }
-        };
 
-        // Handle offer/answer exchange
-        socketRef.current.on('connect', async () => {
-            const offer = await peerConnectionRef.current.createOffer();
-            await peerConnectionRef.current.setLocalDescription(offer);
-            socketRef.current.emit('server-offer', offer);
-        });
+            socketRef.current.on('server-offer', async (offer) => {
+                console.log('received offer', offer);
 
-        socketRef.current.on('rtc-server-answer', async (answer) => {
-            await peerConnectionRef.current.setRemoteDescription(answer);
-        });
+                try {
+                    await peerConnectionRef.current.setRemoteDescription(
+                        new RTCSessionDescription(offer),
+                    );
+                    const answer =
+                        await peerConnectionRef.current.createAnswer();
+                    socket.emit('rtc-client-answer', answer);
+                    await peerConnectionRef.current.setLocalDescription(
+                        new RTCSessionDescription(answer),
+                    );
+                } catch (err) {
+                    console.log(peerConnectionRef.current.connectionState);
+                }
+                console.log(
+                    'creating remote sdp with answer',
+                    offer,
+                    peerConnectionRef.current,
+                );
+            });
 
-        socketRef.current.on('server-ice-candidate', async (candidate) => {
-            try {
-                await peerConnectionRef.current.addIceCandidate(candidate);
-            } catch (err) {
-                console.error('ICE candidate error:', err);
-            }
-        });
+            socketRef.current.on('rtc-server-answer', async (answer) => {
+                console.log('received offer', answer);
+                if (
+                    peerConnectionRef.current.connectionState !== 'stable' &&
+                    peerConnectionRef.current.signalingState !== 'stable'
+                ) {
+                    try {
+                        await peerConnectionRef.current.setRemoteDescription(
+                            new RTCSessionDescription(answer),
+                        );
+                        socketRef.current.emit('rtc-server-answer', answer);
+                        console.log(
+                            'creating remote sdp with answer',
+                            answer,
+                            peerConnectionRef.current,
+                        );
+                    } catch (err) {
+                        console.log(peerConnectionRef.current.connectionState);
+                    }
+                }
+            });
 
-        // Cleanup on component unmount
+            socketRef.current.on('server-ice-candidate', async (candidate) => {
+                console.log('ICE CANDIDATE', candidate);
+                try {
+                    await peerConnectionRef.current.addIceCandidate(candidate);
+                } catch (err) {
+                    console.error('ICE candidate error:', err);
+                }
+            });
+        }
         return () => {
-            peerConnectionRef.current.close();
-            socketRef.current.disconnect();
+            peerConnectionRef.current?.close();
+            socketRef.current?.disconnect();
         };
     }, []);
 
