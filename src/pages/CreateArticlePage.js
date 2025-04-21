@@ -20,8 +20,8 @@ const CreateArticlePage = () => {
         <div>
             <ArticleForm
                 formTitle='Créer un article'
-                action='Créer'
-                configurePopup={configurePopup}
+                action='create'
+                popUpConfig={configurePopup}
             />
             {isPopupOpen && (
                 <PopUp

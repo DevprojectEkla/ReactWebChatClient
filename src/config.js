@@ -2,7 +2,7 @@
 //we need an absolute url to fetch stuff from our server api
 //but once react client is merged we don't need an absolute but a relative url and we can set apiBaseUrl to an empty string
 const isDevelopment = process.env.NODE_ENV === 'development';
-const apiBaseUrl = isDevelopment ? 'https://visio.devekla.com' : '';
+const apiBaseUrl = isDevelopment ? 'https://localhost:8000' : '';
 const APP_TITLE = 'The DevEkla Project';
 const SUB_TITLE = 'Mortal engineering';
 const WIDTH = 'width=device-width, initial-scale=1.0';

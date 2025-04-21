@@ -1,5 +1,4 @@
 import './App.css';
-import styled from 'styled-components';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Footer from './components/Footer';
 import ArticlesPage from './pages/ArticlesPage';
@@ -11,6 +10,7 @@ import SingleArticlePage from './pages/SingleArticlePage';
 import { HeaderProvider } from './contexts/HeaderContext';
 // import { useScrollToTopContext } from "./contexts/ScrollToTop";
 import { HelmetProvider } from 'react-helmet-async';
+import LivePage from './pages/LivePage';
 import CreateArticlePage from './pages/CreateArticlePage';
 import CreateAccountPage from './pages/CreateAccountPage';
 import UpdateArticlePage from './pages/UpdateArticlePage';
@@ -62,6 +62,7 @@ function App() {
                                 element={<SingleArticlePage />}
                             />
                             <Route path={'chatRoom/'} element={<ChatRoom />} />
+                            <Route path={'live/'} element={<LivePage />} />
                             <Route
                                 path={'Contact/'}
                                 element={<ContactPage />}

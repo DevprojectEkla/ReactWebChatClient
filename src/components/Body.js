@@ -15,17 +15,11 @@ const Body = () => {
       <h2>{SUB_TITLE}</h2>
       </StyledDiv>
       <MainButtonContainer>
-        <MyButton>
-          <Link to="/articles">News</Link>
-        </MyButton>
-        <MyButton ><Link to="/bevy">Bevy Wasm</Link></MyButton>
-        <MyButton>
-          <Link to="/chatRoom">Chat</Link>
-        </MyButton>
-        <MyButton>
-          {" "}
-          <Link to="/Contact">Contact Me</Link>
-        </MyButton>
+        <MyButton label={<Link to="/articles">News</Link>}/>
+        <MyButton label={<Link to="/bevy">Bevy Wasm</Link>}/>
+        <MyButton label={<Link to="/chatRoom">Chat</Link>}/>
+        <MyButton label={<Link to="/live">Live</Link>}/>
+        <MyButton label={<Link to="/Contact">Contact Me</Link>}/>
       </MainButtonContainer>
       <TextContainer>
         <h3>Ce site est en construction</h3>
