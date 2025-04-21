@@ -7,12 +7,15 @@ import React, {
 } from 'react';
 import { apiBaseUrl } from '../config';
 import { useSocketServer } from '../hooks/useSocketServer';
+import { RemoteVideo } from '../styles/WebCamStyles';
 
 const WebcamStream = () => {
     const videoRef = useRef(null);
     const socketRef = useRef(null);
     const peerConnectionRef = useRef(null);
     const [turnConf, setTurnConf] = useState(null);
+
+    const { socket, currentUserData } = useSocketServer();
 
     const getTurnConfig = useCallback(async () => {
         const response = await fetch(`${apiBaseUrl}/api/getTurnConfig`);
@@ -21,14 +24,7 @@ const WebcamStream = () => {
         return data;
     }, []);
 
-    const { socket, currentUserData } = useSocketServer();
-    useEffect(() => {
-        // Initialize socket connection
-        if (turnConf === null) {
-            getTurnConfig();
-        }
-        socketRef.current = socket;
-        // WebRTC configuration
+    const setupPeerConnection = useCallback(() => {
         if (turnConf) {
             const configuration = {
                 iceServers: [
@@ -59,13 +55,24 @@ const WebcamStream = () => {
                     );
                 };
                 console.log('hello pc', peerConnectionRef.current);
+                console.log(
+                    'log senders',
+                    peerConnectionRef.current.getSenders().map((s) => s),
+                );
                 peerConnectionRef.current.ontrack = (event) => {
-                    if (videoRef.current) {
-                        videoRef.current.srcObject = event.streams[0];
-                    }
+                    console.log(
+                        'Track received via addEventListener:',
+                        event.track,
+                    );
+                    videoRef.current.srcObject = new MediaStream([event.track]);
                 };
             }
+        }
+    }, [turnConf]);
 
+    const setupSocketListeners = useCallback(() => {
+        socketRef.current = socket;
+        if (socketRef.current) {
             socketRef.current.on('server-offer', async (offer) => {
                 console.log('received offer', offer);
 
@@ -120,22 +127,37 @@ const WebcamStream = () => {
                 }
             });
         }
-        return () => {
-            peerConnectionRef.current?.close();
-            socketRef.current?.disconnect();
-        };
-    }, []);
+    }, [socket]);
+
+    useEffect(
+        () => {
+            // Initialize socket connection
+            if (turnConf === null) {
+                getTurnConfig();
+            }
+
+            if (turnConf) {
+                setupPeerConnection(); // Setup WebRTC peer connection
+                setupSocketListeners(); // Setup socket event listeners
+            }
+            // Cleanup on component unmount
+            return () => {
+                // Clean up the peer connection and socket on component unmount
+                if (peerConnectionRef.current) {
+                    peerConnectionRef.current.close();
+                }
+                if (socketRef.current) {
+                    socketRef.current.disconnect();
+                }
+            };
+        }, // eslint-disable-next-line
+        [turnConf],
+    );
 
     return (
         <div>
             <h2>Webcam Stream</h2>
-            <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                controls
-                style={{ width: '100%', maxWidth: '600px' }}
-            />
+            <RemoteVideo ref={videoRef} autoPlay playsInline />
         </div>
     );
 };
